@@ -638,7 +638,12 @@ function panelFinal(){
   const bg=document.getElementById('gBig').getContext('2d');
   graficas(bg,560,420,true);
   if(S.reto>=RETOS.length-1) iniciarEscenaSalidaMUA();
-  document.getElementById('bMarcar').onclick=()=>{ S.marcar=!S.marcar; panelFinal(); };
+  document.getElementById('bMarcar').onclick=function(){
+    S.marcar=!S.marcar;
+    this.textContent = S.marcar ? '◉ OCULTAR PENDIENTE Y ÁREA' : '◎ MOSTRAR QUÉ SIGNIFICA CADA GRÁFICA';
+    const bg=document.getElementById('gBig').getContext('2d');
+    graficas(bg,560,420,true);
+  };
 
   const box=document.getElementById('opts'), L=['A','B','C','D'];
   r.q.o.forEach((op,i)=>{

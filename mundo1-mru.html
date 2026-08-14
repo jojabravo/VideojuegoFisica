@@ -1032,7 +1032,11 @@ function pantallaFinal(){
   scEnd.hidden=false; scEnd.scrollTop=0;
   dibujarGraficas();
   iniciarEscenaSalidaMRU();
-  document.getElementById('bMarcar').onclick=()=>{ S.marcar=!S.marcar; pantallaFinal(); };
+  document.getElementById('bMarcar').onclick=function(){
+    S.marcar=!S.marcar;
+    this.textContent = S.marcar ? '◉ OCULTAR PENDIENTE Y ÁREA' : '◎ MOSTRAR QUÉ SIGNIFICA CADA GRÁFICA';
+    dibujarGraficas();
+  };
   document.getElementById('eNext').onclick=()=>{ if(window.FA) window.FA.ir(1); };
   document.getElementById('eAgain').onclick=()=>{ S.totalT=0; S.totalX=0; S.graf=[]; S.done=[]; iniciarTramo(0); };
   document.getElementById('eMenu').onclick=abrirMenu;
