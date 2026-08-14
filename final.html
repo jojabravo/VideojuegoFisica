@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>La Física-Aventura · Epílogo Final: El Reencuentro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --selva:#08211D; --selva2:#0E332C; --lima:#7CF29C; --oro:#FFC93C;
+  --arcilla:#E2673C; --morado:#B388FF; --hueso:#F2F6EF; --niebla:#9FBAB0;
+  --display:'Archivo Black', Impact, sans-serif;
+  --texto:'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --dato:'Space Mono', ui-monospace, 'Courier New', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{background:var(--selva);color:var(--hueso);font-family:var(--texto);
+  display:flex;flex-direction:column;align-items:center;padding:0 0 40px;overflow-x:hidden}
+#app{width:100%;max-width:800px;display:flex;flex-direction:column;min-height:100%}
+
+/* ---------- BARRA CINEMÁTICA ---------- */
+.topbar{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-bottom:1px solid rgba(124,242,156,.18);background:#08211D;
+  position:sticky;top:0;z-index:30;
+}
+.topbar .title{font-family:var(--dato);font-size:11px;letter-spacing:.2em;color:var(--niebla);flex:1}
+.chip{background:rgba(124,242,156,.1);border:1px solid rgba(124,242,156,.28);color:var(--hueso);
+  border-radius:9px;padding:8px 12px;font-family:var(--dato);font-size:11px;cursor:pointer;transition:all .15s}
+.chip.on{background:rgba(255,201,60,.18);border-color:rgba(255,201,60,.5);color:var(--oro)}
+
+/* ---------- CANVAS ESCENA DE ACCIÓN ---------- */
+#wrapCine{position:relative;width:100%;background:#04110F;border-bottom:1px solid rgba(124,242,156,.2)}
+canvas#cine{display:block;width:100%;height:auto;background:#04110F}
+
+.letrero{padding:18px 20px 22px;background:rgba(6,26,23,.95);border-bottom:1px solid rgba(124,242,156,.15);min-height:120px}
+.letrero .quien{font-family:var(--dato);font-size:11px;letter-spacing:.22em;color:var(--oro);margin-bottom:6px}
+.letrero p{font-size:16px;line-height:1.6;color:var(--hueso);max-width:720px}
+.letrero p em{font-style:normal;color:var(--lima);font-weight:500}
+
+/* ---------- CARD RESUMEN Y RECOMPENSA ---------- */
+.contenido{padding:26px 18px;width:100%}
+.card{background:linear-gradient(180deg,#0E332C,#0A2620);
+  border:1px solid rgba(124,242,156,.25);border-radius:20px;padding:26px 22px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.eyebrow{font-family:var(--dato);font-size:10.5px;letter-spacing:.22em;color:var(--oro);margin-bottom:6px}
+h1{font-family:var(--display);font-size:clamp(32px,8vw,48px);line-height:.95;margin-bottom:12px}
+h1 .acc{color:var(--lima)}
+p.intro{font-size:15px;line-height:1.6;color:#DCE7DF;margin-bottom:18px}
+
+.resumen{display:grid;grid-template-columns:1fr;gap:12px;margin:20px 0}
+@media(min-width:600px){.resumen{grid-template-columns:1fr 1fr}}
+.m-card{background:rgba(124,242,156,.05);border:1px solid rgba(124,242,156,.2);border-radius:14px;padding:14px 16px;
+  transition:transform .2s, border-color .2s}
+.m-card:hover{border-color:var(--lima);transform:translateY(-2px)}
+.m-card h3{font-family:var(--display);font-size:16px;color:var(--lima);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.m-card h3 span{font-family:var(--dato);font-size:11px;color:var(--oro);background:rgba(255,201,60,.12);padding:2px 6px;border-radius:5px}
+.m-card p{font-size:13px;line-height:1.5;color:var(--niebla);margin:0}
+
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.cta{flex:1;min-width:200px;padding:16px;border:none;border-radius:14px;cursor:pointer;
+  font-family:var(--display);font-size:17px;color:#06201B;background:var(--lima);box-shadow:0 4px 0 #3FAE72;text-align:center;text-decoration:none}
+.cta:active{transform:translateY(4px);box-shadow:none}
+.ghost{flex:1;min-width:200px;padding:16px;border-radius:14px;cursor:pointer;background:rgba(124,242,156,.08);
+  border:1px solid rgba(124,242,156,.3);color:var(--hueso);font-family:var(--dato);font-size:13px;text-align:center;text-decoration:none}
+.ghost:active{background:rgba(124,242,156,.18)}
+
+.foot{margin-top:28px;text-align:center;font-family:var(--dato);font-size:10.5px;color:#43604F}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TOP BAR NARRATIVA -->
+  <div class="topbar">
+    <div class="title" id="tCap">EPÍLOGO · EL REENCUENTRO EN BELLO</div>
+    <button class="chip on" id="bVoz">🔊 VOZ</button>
+    <button class="chip" id="bReplay">↻ REPETIR ESCENA</button>
+  </div>
+
+  <!-- CINEMÁTICA CON ACCIÓN Y ANIMACIÓN CANVAS -->
+  <div id="wrapCine">
+    <canvas id="cine"></canvas>
+    <div class="letrero">
+      <div class="quien" id="quien">EL REENCUENTRO EN BELLO</div>
+      <p id="linea">La nave descendió suavemente sobre los valles de Bello...</p>
+    </div>
+  </div>
+
+  <!-- CONTENIDO RESUMEN Y FINAL -->
+  <div class="contenido">
+    <div class="card">
+      <div class="eyebrow">PREPARACIÓN SABER 11° · CINEMÁTICA COMPLETA</div>
+      <h1>Misión <span class="acc">Cumplida</span></h1>
+      <span id="jugLabel" style="font-family:var(--dato);color:var(--oro);font-size:14px;font-weight:700;display:block;margin-bottom:12px"></span>
+      <p class="intro">
+        Has completado el viaje científico a través de los valles de Bello. Las leyes del universo han sido descifradas para desactivar la anomalía y recuperar la tranquilidad del pueblo:
+      </p>
+
+      <div class="resumen">
+        <div class="m-card">
+          <h3><span>MUNDO 1</span> MRU</h3>
+          <p><strong>Movimiento Rectilíneo Uniforme:</strong> Velocidad constante, distancia proporcional al tiempo ($x = v \cdot t$). En gráfica $x$ vs $t$ es una recta; en $v$ vs $t$ el área representa la distancia.</p>
+        </div>
+        <div class="m-card">
+          <h3><span>MUNDO 2</span> MUA</h3>
+          <p><strong>Uniformemente Acelerado:</strong> Aceleración constante ($a = \text{constante}$). La velocidad cambia linealmente ($v = v_0 + a\cdot t$) y la distancia aumenta con $t^2$.</p>
+        </div>
+        <div class="m-card">
+          <h3><span>MUNDO 3</span> Caída Libre</h3>
+          <p><strong>Gravedad constante:</strong> Todos los cuerpos caen con la misma aceleración $g \approx 9,8\text{ m/s}^2$ en el vacío. La masa no altera el tiempo de caída.</p>
+        </div>
+        <div class="m-card">
+          <h3><span>MUNDO 4</span> Parabólico</h3>
+          <p><strong>Movimiento Compuesto:</strong> Combinación independiente de un MRU horizontal ($v_x$) y una Caída Libre vertical ($v_y$). El alcance máximo se da a $45^\circ$.</p>
+        </div>
+        <div class="m-card" style="grid-column: 1 / -1">
+          <h3><span>MUNDO 5</span> MCU</h3>
+          <p><strong>Movimiento Circular Uniforme:</strong> Rapidez constante pero dirección continuamente cambiante por la aceleración centrípeta ($a_c$). Al cortar el vínculo, la partícula sale despedida en línea recta por inercia (velocidad tangencial).</p>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a class="cta" id="btnMapa" href="portada.html?mapa=1">VOLVER AL MAPA DE MUNDOS</a>
+        <a class="ghost" href="guion-narrativo.md" target="_blank">LEER GUIÓN NARRATIVO</a>
+      </div>
+    </div>
+
+    <div class="foot">I.E. JOSEFA CAMPOS · BELLO, ANTIOQUIA · PREPARACIÓN SABER 11° DE FÍSICA</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const S = { jugador:'', voz:true, t:0, corriendo:true, linea:-1 };
+const $ = id => document.getElementById(id);
+
+/* Leer nombre de jugador */
+var j = new URLSearchParams(location.search).get('j');
+if(!j){ try{ j = localStorage.getItem('fa_jugador'); }catch(e){} }
+if(j){
+  S.jugador = String(j).replace(/[<>&"']/g,'').slice(0,22);
+  $('jugLabel').textContent = '¡FELICITACIONES, ' + S.jugador.toUpperCase() + '!';
+  $('btnMapa').href = 'portada.html?mapa=1&j=' + encodeURIComponent(S.jugador);
+}
+
+/* ============ SINTESIS DE VOZ ============ */
+let voces = [];
+function cargarVoces(){ try{ voces = window.speechSynthesis.getVoices() || []; }catch(e){ voces = []; } }
+if(window.speechSynthesis){ cargarVoces(); window.speechSynthesis.onvoiceschanged = cargarVoces; }
+
+function hablar(txt){
+  if(!S.voz || !window.speechSynthesis) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(txt);
+    u.lang = 'es-CO'; u.rate = 0.94; u.pitch = 0.75; u.volume = 1;
+    const es = voces.filter(v => /^es/i.test(v.lang));
+    const hombre = es.find(v => /(jorge|diego|carlos|miguel|pablo|enrique|juan|male|hombre|helena|no)/i.test(v.name) && !/female|mujer|monica|paulina|marisol|esperanza/i.test(v.name));
+    const elegida = hombre || es[0];
+    if(elegida) u.voice = elegida;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function callar(){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+
+/* ============ GUIÓN NARRATIVO DEL REENCUENTRO ============ */
+const GUION = [
+  { t: 0.4,  q: 'EL CACIQUE NIQUÍA CUENTA', l: 'La nave extraterrestre, deshabilitada en sus motores de rotación, descendió suavemente sobre los valles de Bello.' },
+  { t: 7.5,  q: 'EL REENCUENTRO EN BELLO', l: 'El haz de luz se abrió por última vez. La madre, el abuelo Bitagüí y la pequeña Suri bajaron sanos y salvos a la tierra.' },
+  { t: 15.0, q: 'YARUMA', l: '—¡Mamá! ¡Abuelo! ¡Suri! —gritó Yaruma corriendo con los brazos abiertos para abrazarlos a todos.' },
+  { t: 22.0, q: 'LA ANCIANA DEL PUEBLO', l: 'Los habitantes recuperaron sus pertenencias. La ciencia y el saber han devuelto la paz a nuestra tierra.' },
+  { t: 29.0, q: 'YARUMA', l: '—El lenguaje de la naturaleza no es magia ni misterio —dijo Yaruma sonriendo—: está escrito en ecuaciones que cualquiera puede aprender.' },
+  { t: 37.0, q: 'I.E. JOSEFA CAMPOS · BELLO', l: '¡Has completado exitosamente la preparación en Cinemática para las Pruebas Saber 11°!' }
+];
+const DUR = 44;
+
+/* ============ CANVAS DE ACCIÓN Y ANIMACIÓN ============ */
+const cine = $('cine'), cx = cine.getContext('2d');
+let LW = 900, LH = 480, SC = 1;
+
+function medir(){
+  const w = $('wrapCine').clientWidth || window.innerWidth;
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const h = Math.round(Math.min(w * 0.54, Math.max(220, window.innerHeight - 280)));
+  cine.style.width = w + 'px'; cine.style.height = h + 'px';
+  cine.width = Math.round(w * dpr); cine.height = Math.round(h * dpr);
+  SC = (w * dpr) / LW; LH = cine.height / SC; cx.setTransform(SC, 0, 0, SC, 0, 0);
+}
+window.addEventListener('resize', medir);
+medir();
+
+let prev = performance.now();
+function bucle(now){
+  const dt = Math.min(.05, (now - prev) / 1000); prev = now;
+  if(S.corriendo){
+    S.t += dt;
+    for(let i = GUION.length - 1; i >= 0; i--){
+      if(S.t >= GUION[i].t && S.linea < i){
+        S.linea = i;
+        $('quien').textContent = GUION[i].q;
+        $('linea').textContent = GUION[i].l;
+        if(GUION[i].l) hablar(GUION[i].l);
+        break;
+      }
+    }
+    pintar(S.t);
+    if(S.t > DUR){ S.corriendo = false; callar(); }
+  }
+  requestAnimationFrame(bucle);
+}
+
+function pintar(t){
+  const suelo = LH * 0.78;
+  
+  /* Cielo del atardecer sobre Bello */
+  const g = cx.createLinearGradient(0, 0, 0, LH);
+  g.addColorStop(0, '#061A17');
+  g.addColorStop(0.4, '#0E332C');
+  g.addColorStop(0.7, '#1E4A3B');
+  g.addColorStop(1, '#0A2620');
+  cx.fillStyle = g; cx.fillRect(0, 0, LW, LH);
+
+  /* Estrellas serenas */
+  for(let i = 0; i < 60; i++){
+    const x = (i * 137.5) % LW, y = (i * 53.1) % (suelo * 0.6);
+    cx.globalAlpha = 0.2 + 0.4 * Math.abs(Math.sin(t * 1.5 + i));
+    cx.fillStyle = '#F2F6EF';
+    cx.beginPath(); cx.arc(x, y, 1.2, 0, 7); cx.fill();
+  }
+  cx.globalAlpha = 1;
+
+  /* Montañas del Valle de Aburrá / Bello */
+  cx.fillStyle = '#08211D';
+  for(let k = 0; k < 6; k++){
+    const sx = k * 180 - 40, h = 80 + ((k * 43) % 60);
+    cx.beginPath(); cx.moveTo(sx - 130, suelo); cx.lineTo(sx, suelo - h); cx.lineTo(sx + 130, suelo); cx.fill();
+  }
+
+  /* Suelo de pasto verde de Bello */
+  cx.fillStyle = '#14453A'; cx.fillRect(0, suelo, LW, LH - suelo);
+  cx.fillStyle = '#7CF29C'; cx.fillRect(0, suelo - 3, LW, 4);
+
+  /* Casas y parroquia de Bello al fondo */
+  for(let i = 0; i < 5; i++){
+    const cx0 = 60 + i * 180;
+    cx.fillStyle = '#0A2D25';
+    cx.fillRect(cx0, suelo - 35, 45, 35);
+    cx.fillStyle = '#114539';
+    cx.beginPath(); cx.moveTo(cx0 - 5, suelo - 35); cx.lineTo(cx0 + 22, suelo - 52); cx.lineTo(cx0 + 50, suelo - 35); cx.fill();
+    cx.fillStyle = 'rgba(255,201,60,0.6)';
+    cx.fillRect(cx0 + 12, suelo - 24, 10, 12);
+  }
+
+  /* LA NAVE DESCENDIENDO SUAVEMENTE */
+  const desc = Math.min(1, t / 8); // Desciende lentamente
+  const ny = -60 + desc * (LH * 0.28 + 60);
+  const nx = LW * 0.5;
+  const R = Math.min(LW, LH) * 0.12;
+
+  /* Haz de luz de descenso suave */
+  const haz = (t > 5 && t < 22) ? Math.min(1, (t - 5) / 2) * (t > 19 ? Math.max(0, (22 - t) / 3) : 1) : 0;
+  if(haz > 0){
+    const hg = cx.createLinearGradient(0, ny, 0, suelo);
+    hg.addColorStop(0, 'rgba(124,242,156,' + (0.4 * haz) + ')');
+    hg.addColorStop(1, 'rgba(124,242,156,0.02)');
+    cx.fillStyle = hg; cx.beginPath();
+    cx.moveTo(nx - R * 0.6, ny); cx.lineTo(nx + R * 0.6, ny);
+    cx.lineTo(nx + R * 1.8, suelo); cx.lineTo(nx - R * 1.8, suelo);
+    cx.closePath(); cx.fill();
+  }
+
+  /* LA FAMILIA DESCENDIENDO SANA Y SALVA POR EL HAZ */
+  if(t > 7){
+    const pFam = Math.min(1, (t - 7) / 7); // 0 a 1 bajando
+    const fy = ny + pFam * (suelo - ny - 10);
+
+    /* Madre, Abuelo Bitagüí, Hermana Suri */
+    const posFam = [
+      { offset: -28, color: '#FFC93C', label: 'Madre', alt: 22 },
+      { offset: 0,   color: '#B388FF', label: 'Abuelo', alt: 26 },
+      { offset: 28,  color: '#7CF29C', label: 'Suri', alt: 16 }
+    ];
+
+    posFam.forEach((f) => {
+      const fx = nx + f.offset;
+      const yPos = fy;
+      cx.fillStyle = f.color;
+      // Cuerpo
+      cx.beginPath(); cx.roundRect(fx - 7, yPos - f.alt, 14, f.alt, 5); cx.fill();
+      // Cabeza
+      cx.beginPath(); cx.arc(fx, yPos - f.alt - 7, 6, 0, 7); cx.fill();
+    });
+  }
+
+  /* YARUMA CORRIENDO AL ENCUENTRO */
+  if(t > 13){
+    const pYar = Math.min(1, (t - 13) / 4);
+    const yx = 100 + pYar * (nx - 160); // Yaruma corre desde la izquierda hacia la familia
+    const yy = suelo;
+
+    cx.fillStyle = '#7CF29C';
+    cx.beginPath(); cx.roundRect(yx - 8, yy - 28, 16, 20, 6); cx.fill();
+    cx.fillStyle = '#F2F6EF';
+    cx.beginPath(); cx.arc(yx, yy - 34, 7, 0, 7); cx.fill();
+    // Brazos abiertos
+    cx.strokeStyle = '#7CF29C'; cx.lineWidth = 3.5; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(yx - 12, yy - 22); cx.lineTo(yx + 12, yy - 22); cx.stroke();
+  }
+
+  /* CACIQUE NIQUÍA Y LA ANCIANA OBSERVANDO FELICES */
+  const cx0 = LW * 0.82;
+  // Cacique
+  cx.fillStyle = '#FFC93C';
+  cx.beginPath(); cx.roundRect(cx0 - 10, suelo - 30, 16, 22, 6); cx.fill();
+  cx.fillStyle = '#F2F6EF'; cx.beginPath(); cx.arc(cx0 - 2, suelo - 36, 7, 0, 7); cx.fill();
+  // Bastón del Cacique
+  cx.strokeStyle = '#FFC93C'; cx.lineWidth = 3;
+  cx.beginPath(); cx.moveTo(cx0 + 10, suelo - 38); cx.lineTo(cx0 + 10, suelo); cx.stroke();
+
+  // Anciana
+  cx.fillStyle = '#B388FF';
+  cx.beginPath(); cx.roundRect(cx0 + 20, suelo - 26, 14, 18, 5); cx.fill();
+  cx.fillStyle = '#F2F6EF'; cx.beginPath(); cx.arc(cx0 + 27, suelo - 32, 6, 0, 7); cx.fill();
+
+  /* CUERPO DE LA NAVE EXTRATERRESTRE APAGÁNDOSE */
+  cx.fillStyle = 'rgba(124,242,156,0.12)';
+  cx.beginPath(); cx.ellipse(nx, ny, R * 2.2, R * 0.9, 0, 0, 7); cx.fill();
+  cx.fillStyle = '#14232B'; cx.beginPath(); cx.ellipse(nx, ny, R, R * 0.32, 0, 0, 7); cx.fill();
+  cx.fillStyle = '#1B2E38'; cx.beginPath(); cx.ellipse(nx, ny - R * 0.16, R * 0.5, R * 0.25, 0, 0, 7); cx.fill();
+
+  /* Luces suaves girando despacio (desactivadas) */
+  for(let i = 0; i < 6; i++){
+    const a = t * 0.4 + i * Math.PI / 3;
+    const lx = nx + Math.cos(a) * R * 0.85, ly = ny + Math.sin(a) * R * 0.26;
+    cx.fillStyle = i % 2 === 0 ? '#7CF29C' : '#FFC93C';
+    cx.globalAlpha = 0.3 + 0.4 * Math.sin(t * 2 + i);
+    cx.beginPath(); cx.arc(lx, ly, 2.5, 0, 7); cx.fill();
+  }
+  cx.globalAlpha = 1;
+
+  /* Chispas y pertenencias flotando de regreso */
+  if(t > 20 && t < 35){
+    for(let i = 0; i < 12; i++){
+      const px = (nx - 120 + i * 24 + Math.sin(t + i) * 15);
+      const py = suelo - 20 - ((t * 20 + i * 18) % 120);
+      cx.fillStyle = i % 2 ? '#FFC93C' : '#7CF29C';
+      cx.globalAlpha = 0.6;
+      cx.fillRect(px, py, 4, 4);
+    }
+    cx.globalAlpha = 1;
+  }
+
+  /* Viñeta cinematográfica */
+  const v = cx.createRadialGradient(LW/2, LH/2, LH*0.35, LW/2, LH/2, LH*0.95);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.55)');
+  cx.fillStyle = v; cx.fillRect(0, 0, LW, LH);
+}
+
+/* ============ INTERACCIONES Y EVENTOS ============ */
+$('bVoz').onclick = function(){
+  S.voz = !S.voz;
+  this.classList.toggle('on', S.voz);
+  this.textContent = S.voz ? '🔊 VOZ' : '🔇 VOZ';
+  if(!S.voz) callar();
+  else if(S.linea >= 0 && GUION[S.linea].l) hablar(GUION[S.linea].l);
+};
+
+$('bReplay').onclick = function(){
+  S.t = 0; S.linea = -1; S.corriendo = true;
+  callar();
+  prev = performance.now();
+};
+
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+    if(typeof r !== 'number') r = 0;
+    this.beginPath(); this.moveTo(x+r,y); this.lineTo(x+w-r,y);
+    this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r);
+    this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h);
+    this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r);
+    this.quadraticCurveTo(x,y,x+r,y); this.closePath(); return this;
+  };
+}
+
+requestAnimationFrame(bucle);
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "La Física-Aventura",
+  "description": "Videojuego educativo de física y cinemática en 5 mundos para la preparación de Pruebas Saber 11.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

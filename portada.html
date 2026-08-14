@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>La Física-Aventura · Portada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --selva:#061A16; --selva2:#0C2B24; --selva3:#123D34;
+  --lima:#00F59B; --lima-glow:rgba(0,245,155,0.35);
+  --oro:#FFD166; --oro-glow:rgba(255,209,102,0.4);
+  --arcilla:#FF6B6B; --turquesa:#00E5FF;
+  --morado:#C084FC; --morado-glow:rgba(192,132,252,0.4);
+  --hueso:#F8FAFC; --niebla:#A0C4B8;
+  --display:'Archivo Black', Impact, sans-serif;
+  --texto:'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --dato:'Space Mono', ui-monospace, 'Courier New', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--selva);color:var(--hueso);font-family:var(--texto);
+  min-height:100%;display:flex;flex-direction:column;align-items:center;
+  padding:0 0 env(safe-area-inset-bottom);overflow-x:hidden}
+#app{width:100%;max-width:840px;flex:1;display:flex;flex-direction:column}
+.pantalla{display:none;flex:1;flex-direction:column}
+.pantalla.ver{display:flex}
+
+/* ---------- PORTADA ---------- */
+#cielo{position:fixed;inset:0;z-index:0;width:100%;height:100%;display:block}
+.contenido{position:relative;z-index:1;padding:22px 18px 30px;display:flex;flex-direction:column;min-height:100%}
+.sello{
+  display:inline-flex;align-items:center;gap:6px;font-family:var(--dato);font-size:10.5px;
+  letter-spacing:.22em;color:var(--lima);background:rgba(0,245,155,.12);border:1px solid rgba(0,245,155,.3);
+  padding:4px 10px;border-radius:20px;margin-bottom:14px;width:fit-content;
+}
+.titulo{font-family:var(--display);font-size:clamp(38px,12vw,76px);line-height:.86;letter-spacing:-.02em;
+  text-shadow:0 6px 20px rgba(0,0,0,.7), 0 0 30px rgba(0,245,155,.25)}
+.titulo .b{display:block;color:var(--oro);text-shadow:0 6px 20px rgba(0,0,0,.7), 0 0 30px rgba(255,209,102,.35)}
+.bajada{font-family:var(--dato);font-size:11.5px;letter-spacing:.18em;color:var(--niebla);
+  margin:12px 0 4px;line-height:1.6}
+.bajada b{color:#FFF;font-weight:700;background:rgba(255,209,102,.15);padding:1px 6px;border-radius:4px}
+.espacio{flex:1;min-height:16px}
+
+.campo{margin-top:16px}
+.campo label{display:block;font-family:var(--dato);font-size:11px;letter-spacing:.2em;color:var(--lima);margin-bottom:6px;font-weight:700}
+.campo input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid rgba(0,245,155,.4);
+  background:rgba(6,26,22,.85);color:#FFF;font-family:var(--display);font-size:18px;letter-spacing:.02em;
+  box-shadow:0 4px 14px rgba(0,0,0,.4), inset 0 2px 4px rgba(0,0,0,.3)}
+.campo input::placeholder{font-family:var(--texto);font-weight:400;color:#618A7E;letter-spacing:0;font-size:16px}
+.campo input:focus{outline:none;border-color:var(--oro);background:rgba(8,35,30,.95);box-shadow:0 0 16px rgba(255,209,102,.3)}
+
+.cta{width:100%;margin-top:12px;padding:16px;border:none;border-radius:14px;cursor:pointer;
+  font-family:var(--display);font-size:18px;color:#041411;
+  background:linear-gradient(180deg,#00F59B 0%,#00C978 100%);
+  box-shadow:0 6px 0 #008751, 0 10px 24px rgba(0,245,155,.3);transition:transform .15s;}
+.cta:active{transform:translateY(4px);box-shadow:0 2px 0 #008751}
+.ghost{width:100%;margin-top:8px;padding:12px;border-radius:12px;cursor:pointer;background:rgba(6,26,22,.65);
+  border:1.5px solid rgba(0,245,155,.35);color:var(--hueso);font-family:var(--dato);font-size:12px;letter-spacing:.08em}
+.ghost:active{background:rgba(0,245,155,.18)}
+
+.creditos{margin-top:20px;padding-top:14px;border-top:1px solid rgba(0,245,155,.2)}
+.creditos .rol{font-family:var(--dato);font-size:9.5px;letter-spacing:.24em;color:var(--lima);margin-bottom:6px}
+.creditos .autor{font-family:var(--display);font-size:16px;line-height:1.2;margin-bottom:6px;color:#FFF}
+.creditos ul{list-style:none;font-family:var(--dato);font-size:10px;line-height:1.8;color:var(--niebla);letter-spacing:.03em}
+.creditos .inst{margin-top:10px;font-family:var(--dato);font-size:9.5px;letter-spacing:.12em;color:#789E92;line-height:1.6}
+
+/* ---------- PRÓLOGO ---------- */
+#pro{background:#04110F;position:relative;min-height:100%}
+#cine{width:100%;display:block;background:#04110F}
+.barra{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:1px solid rgba(0,245,155,.2);background:#08231E}
+.barra .t{font-family:var(--dato);font-size:10.5px;letter-spacing:.18em;color:var(--niebla);flex:1}
+.chip{background:rgba(0,245,155,.1);border:1px solid rgba(0,245,155,.3);color:var(--hueso);
+  border-radius:9px;padding:7px 11px;font-family:var(--dato);font-size:11px;cursor:pointer}
+.chip.on{background:rgba(255,209,102,.2);border-color:var(--oro);color:var(--oro);font-weight:700}
+.letrero{padding:16px 18px 24px;min-height:125px}
+.letrero p{font-size:15.5px;line-height:1.55;color:var(--hueso);max-width:640px}
+.letrero .quien{font-family:var(--dato);font-size:10.5px;letter-spacing:.2em;color:var(--morado);margin-bottom:6px}
+
+/* ---------- MAPA DE AVENTURA ANDINO ILUSTRADO ---------- */
+.mapa{padding:10px 8px 36px;position:relative;max-width:100%;margin:0 auto}
+.mapa-header{margin-bottom:10px;position:relative;z-index:2}
+
+.mapa-banner-tit{
+  background:linear-gradient(180deg,#F59E0B 0%,#D97706 50%,#78350F 100%);
+  border:2.5px solid #FDE68A;border-radius:18px;padding:12px 14px;text-align:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.7), inset 0 2px 0 rgba(255,255,255,.5), inset 0 -3px 0 rgba(0,0,0,.5);
+  margin-bottom:10px;position:relative;overflow:hidden;
+}
+.mapa-banner-tit::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, rgba(254,240,138,.35) 0%, transparent 80%);
+  pointer-events:none;
+}
+.mapa-banner-tit h1{
+  font-family:var(--display);font-size:clamp(19px,4.2vw,30px);
+  color:#FFF;text-shadow:0 3px 8px rgba(0,0,0,.9), 0 0 16px rgba(253,230,138,.6);
+  margin:0;letter-spacing:.04em;text-transform:uppercase;
+}
+.mapa-banner-tit .subtit{
+  font-family:var(--dato);font-size:10px;letter-spacing:.16em;color:#FEF08A;
+  margin-top:3px;text-shadow:0 1px 4px rgba(0,0,0,.9);font-weight:700;
+}
+
+.mapa-controles-hud{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;
+  background:linear-gradient(90deg,rgba(6,26,22,.95) 0%,rgba(12,43,36,.95) 100%);
+  border:1.5px solid rgba(0,245,155,.35);
+  border-radius:14px;padding:8px 12px;margin-bottom:10px;
+}
+.mapa-saludo{font-family:var(--display);font-size:15px;color:var(--hueso)}
+.mapa-saludo span{color:var(--oro)}
+
+.mapa-vista-btns{display:flex;gap:6px}
+.btn-vista{
+  background:rgba(0,245,155,.1);border:1px solid rgba(0,245,155,.3);color:var(--niebla);
+  padding:6px 12px;border-radius:9px;font-family:var(--dato);font-size:10.5px;letter-spacing:.08em;
+  cursor:pointer;transition:all .2s;
+}
+.btn-vista.act{
+  background:linear-gradient(180deg,rgba(255,209,102,.28) 0%,rgba(217,119,6,.3) 100%);
+  border-color:var(--oro);color:var(--oro);font-weight:700;box-shadow:0 0 10px rgba(255,209,102,.3);
+}
+
+/* CONTENEDOR DEL MAPA ILUSTRADO */
+.mapa-canvas-box{
+  position:relative;border-radius:20px;overflow:hidden;
+  border:2.5px solid rgba(0,245,155,.45);
+  box-shadow:0 16px 48px rgba(0,0,0,.85), 0 0 30px rgba(0,245,155,.15), inset 0 0 40px rgba(0,0,0,.7);
+  background:#071E19;
+}
+.mapa-svg{
+  display:block;width:100%;height:auto;aspect-ratio:16/10;
+  filter:drop-shadow(0 4px 14px rgba(0,0,0,.6));
+}
+
+/* ELEMENTOS DEL MAPA INTERACTIVO SVG */
+.map-node{
+  cursor:pointer;transition:transform .22s cubic-bezier(.2,.8,.2,1);
+}
+.map-node:hover{
+  transform:scale(1.025);
+}
+.map-node:active{
+  transform:scale(0.975);
+}
+.map-tag{
+  pointer-events:none;
+}
+
+/* DIÁLOGO DEL CACIQUE EN EL MAPA */
+.mapa-cacique-hud{
+  margin-top:12px;display:flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,rgba(20,16,42,.95) 0%,rgba(8,33,28,.95) 100%);
+  border:1.5px solid rgba(192,132,252,.45);border-radius:18px;padding:12px 14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.55), 0 0 20px rgba(192,132,252,.15);
+}
+.cacique-avatar-wrap{
+  position:relative;width:58px;height:58px;border-radius:50%;flex:none;
+  background:radial-gradient(circle,#FEF08A 0%,#F59E0B 40%,#1E1B4B 100%);
+  border:2.5px solid #FDE68A;box-shadow:0 0 18px rgba(255,209,102,.5);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.cacique-avatar-svg{
+  width:100%;height:100%;display:block;
+}
+.cacique-speech{flex:1;min-width:0}
+.cacique-speech .nom{
+  font-family:var(--dato);font-size:10px;letter-spacing:.2em;color:var(--oro);margin-bottom:3px;font-weight:700;
+}
+.cacique-speech p{
+  font-family:var(--texto);font-size:13.5px;color:var(--hueso);line-height:1.45;margin:0;
+}
+.btn-cacique-voz{
+  background:linear-gradient(180deg,rgba(255,209,102,.25) 0%,rgba(217,119,6,.3) 100%);
+  border:1.5px solid var(--oro);color:var(--oro);
+  padding:8px 12px;border-radius:10px;font-family:var(--dato);font-size:10.5px;letter-spacing:.1em;
+  cursor:pointer;flex:none;font-weight:700;box-shadow:0 0 10px rgba(255,209,102,.25);
+}
+
+/* MODAL DE INFORMACIÓN DE ESTACIÓN */
+.modal-estacion-backdrop{
+  position:fixed;inset:0;background:rgba(2,9,8,.88);backdrop-filter:blur(10px);
+  z-index:99;display:none;align-items:center;justify-content:center;padding:16px;
+}
+.modal-estacion-backdrop.abierto{display:flex}
+.modal-estacion{
+  background:linear-gradient(180deg,#0B2E27 0%,#051814 100%);
+  border:2px solid var(--lima);border-radius:24px;max-width:540px;width:100%;
+  padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.95), 0 0 35px rgba(0,245,155,.3);
+  position:relative;animation:modalZoomIn .22s ease-out;
+}
+@keyframes modalZoomIn{
+  from{opacity:0;transform:scale(.92) translateY(12px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.modal-cerrar{
+  position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#FFF;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.modal-eyebrow{font-family:var(--dato);font-size:10.5px;letter-spacing:.22em;color:var(--oro);margin-bottom:6px;font-weight:700}
+.modal-titulo{font-family:var(--display);font-size:24px;color:#FFF;margin-bottom:8px}
+.modal-tema{
+  display:inline-block;background:rgba(0,245,155,.16);border:1px solid rgba(0,245,155,.45);
+  color:var(--lima);padding:4px 10px;border-radius:8px;font-family:var(--dato);font-size:11px;
+  letter-spacing:.12em;margin-bottom:12px;font-weight:700;
+}
+.modal-desc{font-size:14.5px;line-height:1.55;color:#D8EAE3;margin-bottom:14px}
+.modal-formula{
+  background:rgba(3,15,13,.95);border:1.5px solid rgba(255,209,102,.45);border-radius:14px;
+  padding:12px 14px;font-family:var(--dato);font-size:13px;color:var(--oro);margin-bottom:18px;text-align:center;
+}
+.modal-formula small{display:block;font-size:10px;color:var(--niebla);letter-spacing:.1em;margin-top:4px}
+.modal-btn-iniciar{
+  display:block;width:100%;text-align:center;text-decoration:none;
+  background:linear-gradient(180deg,#00F59B 0%,#00B86C 100%);
+  color:#041411;font-family:var(--display);font-size:17px;font-weight:700;
+  padding:15px;border-radius:14px;box-shadow:0 6px 20px rgba(0,245,155,.4);
+  letter-spacing:.04em;transition:transform .18s;
+}
+.modal-btn-iniciar:hover{transform:translateY(-2px);filter:brightness(1.1)}
+
+/* MODO LISTA COMPACTA */
+.mapa-lista-compacta{
+  display:none;flex-direction:column;gap:10px;margin-top:12px;
+}
+.mapa-lista-compacta.ver{display:flex}
+.lista-card{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;
+  background:linear-gradient(90deg,rgba(8,35,30,.92) 0%,rgba(12,45,39,.92) 100%);
+  border:1.5px solid rgba(0,245,155,.28);
+  text-decoration:none;color:var(--hueso);transition:all .2s;
+}
+.lista-card:hover{
+  border-color:var(--lima);background:rgba(14,54,47,.98);transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(0,245,155,.2);
+}
+.lista-num{
+  width:44px;height:44px;border-radius:14px;flex:none;background:rgba(4,20,17,.95);
+  border:2px solid var(--oro);color:var(--oro);display:flex;align-items:center;
+  justify-content:center;font-family:var(--display);font-size:22px;
+  box-shadow:0 0 12px rgba(255,209,102,.3);
+}
+.lista-num.est{border-color:var(--morado);color:var(--morado);box-shadow:0 0 12px rgba(192,132,252,.35)}
+.lista-info{flex:1}
+.lista-tit{font-family:var(--display);font-size:17px;margin-bottom:2px;color:#FFF}
+.lista-sub{font-size:13px;color:var(--niebla);line-height:1.4}
+.lista-tag{font-family:var(--dato);font-size:10px;color:var(--lima);letter-spacing:.08em;margin-top:4px;font-weight:700}
+</style>
+</head>
+<body>
+
+<canvas id="cielo"></canvas>
+<div id="app">
+
+<!-- ================= PORTADA ================= -->
+<section class="pantalla ver" id="pPortada">
+  <div class="contenido">
+    <div class="sello">I.E. JOSEFA CAMPOS · BELLO, ANTIOQUIA</div>
+    <h1 class="titulo">LA FÍSICA<span class="b">AVENTURA</span></h1>
+    <div class="bajada">CINEMÁTICA EN CINCO MUNDOS<br><b>PREPARACIÓN PRUEBAS SABER 11</b></div>
+
+    <div class="campo">
+      <label>¿CÓMO TE LLAMAS?</label>
+      <input id="nombre" type="text" maxlength="22" placeholder="Escribe tu nombre" autocomplete="off">
+    </div>
+    <button class="cta" id="bEmpezar">COMENZAR LA HISTORIA</button>
+    <button class="ghost" id="bSaltarPro">Ya vi la historia · ir directo a los mundos</button>
+
+    <div class="espacio"></div>
+
+    <div class="creditos">
+      <div class="rol">DISEÑO, FÍSICA Y NARRATIVA</div>
+      <div class="autor">Jorge Armando<br>Jaramillo Bravo</div>
+      <ul>
+        <li>Lic. en Matemáticas y Física — UdeA</li>
+        <li>Mag. en Enseñanza de las Ciencias Exactas y Naturales — UNAL</li>
+        <li>Doctorante en Educación — UTEL</li>
+      </ul>
+      <div class="inst">DOCENTE DE FÍSICA Y MATEMÁTICAS<br>INSTITUCIÓN EDUCATIVA JOSEFA CAMPOS</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRÓLOGO ================= -->
+<section class="pantalla" id="pPro">
+  <div class="barra">
+    <div class="t" id="tCap">PRÓLOGO · LA NOCHE DE LA LUZ</div>
+    <button class="chip on" id="bVoz">🔊 VOZ</button>
+    <button class="chip" id="bSaltar">SALTAR ▸</button>
+  </div>
+  <canvas id="cine"></canvas>
+  <div class="letrero">
+    <div class="quien" id="quien">EL CACIQUE NIQUÍA CUENTA</div>
+    <p id="linea"></p>
+  </div>
+</section>
+
+<!-- ================= MAPA DE AVENTURA ILUSTRADO ================= -->
+<section class="pantalla" id="pMapa">
+  <div class="mapa">
+    
+    <!-- ENCABEZADO Y BANNER ESTILO JUEGO DE AVENTURA -->
+    <div class="mapa-header">
+      <div class="mapa-banner-tit">
+        <h1>MAPA DE LA FÍSICA-AVENTURA</h1>
+        <div class="subtit">EXPEDICIÓN CINEMÁTICA EN EL VALLE DE ABURRÁ · CERRO QUITASOL</div>
+      </div>
+
+      <div class="mapa-controles-hud">
+        <div class="mapa-saludo">Adelante, <span id="nMapa">viajero</span></div>
+        <div class="mapa-vista-btns">
+          <button class="btn-vista act" id="bVistaMapa">🗺️ MAPA ILUSTRADO</button>
+          <button class="btn-vista" id="bVistaLista">📋 MODO LISTA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISTA 1: TABLERO DEL MAPA ILUSTRADO (SVG INTERACTIVO ANDINO) -->
+    <div class="mapa-canvas-box" id="cajaMapaGrafico">
+      <svg class="mapa-svg" viewBox="0 0 1000 680" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <!-- Degradados del cielo andino: desde el amanecer dorado del valle hasta la noche cósmica en la cumbre -->
+          <linearGradient id="skyGradAndino" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FFD166"/>
+            <stop offset="25%" stop-color="#FDBA74"/>
+            <stop offset="50%" stop-color="#38BDF8"/>
+            <stop offset="78%" stop-color="#312E81"/>
+            <stop offset="100%" stop-color="#0B091A"/>
+          </linearGradient>
+
+          <!-- Montañas y laderas del Cerro Quitasol -->
+          <linearGradient id="mountQuitasol" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#854D0E"/>
+            <stop offset="40%" stop-color="#3F6212"/>
+            <stop offset="100%" stop-color="#143621"/>
+          </linearGradient>
+
+          <linearGradient id="mountNiquia" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1E3A2F"/>
+            <stop offset="60%" stop-color="#0F2D24"/>
+            <stop offset="100%" stop-color="#081C17"/>
+          </linearGradient>
+
+          <linearGradient id="cumbreNocturna" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#4C1D95"/>
+            <stop offset="60%" stop-color="#1E1B4B"/>
+            <stop offset="100%" stop-color="#071915"/>
+          </linearGradient>
+
+          <!-- Río Medellín / Aburrá sagrado -->
+          <linearGradient id="rioSagrado" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38BDF8"/>
+            <stop offset="45%" stop-color="#0284C7"/>
+            <stop offset="100%" stop-color="#0369A1"/>
+          </linearGradient>
+
+          <!-- Sendero de energía ancestral cian -->
+          <linearGradient id="hazCinematico" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00F59B"/>
+            <stop offset="35%" stop-color="#00E5FF"/>
+            <stop offset="70%" stop-color="#FFD166"/>
+            <stop offset="100%" stop-color="#C084FC"/>
+          </linearGradient>
+
+          <!-- Resplandores de nodos -->
+          <filter id="glowFisica" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+
+          <filter id="glowOro" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+
+        <!-- FONDO DE CIELO ANDINO -->
+        <rect width="1000" height="680" fill="url(#skyGradAndino)"/>
+
+        <!-- SOL RADIANTE INDÍGENA SOBRE EL VALLE IZQUIERDO -->
+        <g transform="translate(100, 100)" opacity="0.85">
+          <circle cx="0" cy="0" r="38" fill="#FEF08A" filter="url(#glowOro)"/>
+          <circle cx="0" cy="0" r="28" fill="#FDE047"/>
+          <!-- Rayos solares precolombinos -->
+          <g stroke="#F59E0B" stroke-width="3" stroke-linecap="round">
+            <line x1="0" y1="-46" x2="0" y2="-56"/>
+            <line x1="0" y1="46" x2="0" y2="56"/>
+            <line x1="-46" y1="0" x2="-56" y2="0"/>
+            <line x1="46" y1="0" x2="56" y2="0"/>
+            <line x1="-32" y1="-32" x2="-40" y2="-40"/>
+            <line x1="32" y1="32" x2="40" y2="40"/>
+            <line x1="-32" y1="32" x2="-40" y2="40"/>
+            <line x1="32" y1="-32" x2="40" y2="-40"/>
+          </g>
+        </g>
+
+        <!-- CONSTELACIONES Y ESTRELLAS EN LA CUMBRE NOCTURNA DERECHA -->
+        <g fill="#FFF" opacity="0.9">
+          <circle cx="750" cy="45" r="2.5" filter="url(#glowFisica)"/>
+          <circle cx="790" cy="28" r="1.8"/>
+          <circle cx="830" cy="65" r="2.2"/>
+          <circle cx="875" cy="35" r="3" filter="url(#glowOro)"/>
+          <circle cx="920" cy="80" r="1.8"/>
+          <circle cx="960" cy="40" r="2.6"/>
+          <circle cx="890" cy="115" r="1.5"/>
+          <circle cx="980" cy="95" r="2.2"/>
+          <!-- Líneas de constelación del Cóndor -->
+          <path d="M790,28 L830,65 L875,35 L960,40" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" stroke-dasharray="3,3" fill="none"/>
+        </g>
+
+        <!-- MONTAÑAS DE FONDO DEL VALLE DE ABURRÁ Y CERRO QUITASOL -->
+        <!-- Cresta lejana -->
+        <polygon points="60,420 220,160 390,420" fill="#713F12" opacity="0.65"/>
+        <polygon points="220,160 190,210 220,225 250,205" fill="#FEF3C7" opacity="0.9"/>
+
+        <!-- Pico Mayor Cerro Quitasol -->
+        <polygon points="160,480 390,110 630,480" fill="url(#mountQuitasol)"/>
+        <!-- Nieve y luz de cumbre -->
+        <polygon points="390,110 340,180 390,200 440,170" fill="#FFFFFF" opacity="0.95"/>
+        <!-- Rótulo de ubicación geográfica -->
+        <g transform="translate(390, 150)">
+          <rect x="-85" y="-14" width="170" height="24" rx="8" fill="rgba(6,26,22,0.85)" stroke="#FFD166" stroke-width="1.5"/>
+          <text x="0" y="3" font-family="'Space Mono', monospace" font-size="11" font-weight="bold" fill="#FFD166" text-anchor="middle" letter-spacing="1.5">⛰️ CERRO QUITASOL</text>
+        </g>
+
+        <!-- Cordillera oriental hacia el observatorio -->
+        <path d="M530,680 L650,420 L840,210 L960,340 L1020,680 Z" fill="url(#cumbreNocturna)"/>
+        <polygon points="840,210 800,270 840,285 880,260" fill="#DDD6FE" opacity="0.4"/>
+
+        <!-- Colinas medias del Valle de Niquía con terrazas indígenas -->
+        <path d="M-20,480 Q160,320 380,390 T760,430 L760,680 L-20,680 Z" fill="url(#mountNiquia)"/>
+
+        <!-- PALMAS DE CERA Y VEGETACIÓN ANDINA EN LAS LADERAS -->
+        <!-- Palma de Cera 1 -->
+        <g transform="translate(80, 360)">
+          <path d="M0,80 Q2,40 0,0" stroke="#78716C" stroke-width="3.5" fill="none"/>
+          <path d="M0,0 Q-18,-15 -25,-5 Q-12,5 0,0" fill="#15803D"/>
+          <path d="M0,0 Q18,-15 25,-5 Q12,5 0,0" fill="#16A34A"/>
+          <path d="M0,0 Q-10,-22 0,-30 Q10,-22 0,0" fill="#22C55E"/>
+        </g>
+        <!-- Palma de Cera 2 -->
+        <g transform="translate(290, 340)">
+          <path d="M0,90 Q-2,45 0,0" stroke="#78716C" stroke-width="3" fill="none"/>
+          <path d="M0,0 Q-15,-12 -20,-4 Q-10,4 0,0" fill="#15803D"/>
+          <path d="M0,0 Q15,-12 20,-4 Q10,4 0,0" fill="#16A34A"/>
+          <path d="M0,0 Q-8,-18 0,-24 Q8,-18 0,0" fill="#22C55E"/>
+        </g>
+        <!-- Palma de Cera 3 -->
+        <g transform="translate(730, 370)">
+          <path d="M0,75 Q2,35 0,0" stroke="#57534E" stroke-width="3" fill="none"/>
+          <path d="M0,0 Q-14,-10 -18,-3 Q-8,3 0,0" fill="#166534"/>
+          <path d="M0,0 Q14,-10 18,-3 Q8,3 0,0" fill="#15803D"/>
+          <path d="M0,0 Q-6,-15 0,-20 Q6,-15 0,0" fill="#22C55E"/>
+        </g>
+
+        <!-- RÍO MEDELLÍN / ABURRÁ ANCESTRAL -->
+        <path d="M780,310 C670,380 560,460 460,530 C380,585 300,625 180,680 L270,680 C370,625 460,575 550,500 C640,420 730,360 810,310 Z" fill="url(#rioSagrado)"/>
+        <!-- Ondas de corriente sagrada -->
+        <path d="M760,335 Q670,395 545,485 Q430,560 260,655" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-dasharray="10,12" fill="none"/>
+        <text x="420" y="605" font-family="'Space Mono', monospace" font-size="13" font-weight="bold" fill="#BAE6FD" letter-spacing="2" transform="rotate(-28, 420, 605)">🌊 RÍO MEDELLÍN (ABURRÁ)</text>
+
+        <!-- SENDERO EMPEDRADO QHAPAQ ÑAN / SENDERO NIQUÍA -->
+        <path d="M180,510 Q280,450 390,420 Q500,430 610,510 Q700,530 800,510 Q850,420 830,260" 
+              stroke="#D97706" stroke-width="8" stroke-dasharray="14,8" fill="none" opacity="0.75"/>
+        <path d="M180,510 Q280,450 390,420 Q500,430 610,510 Q700,530 800,510 Q850,420 830,260" 
+              stroke="#FEF3C7" stroke-width="2.5" stroke-dasharray="6,16" fill="none" opacity="0.9"/>
+
+        <!-- HACES LUMINOSOS DE EXPEDICIÓN CINEMÁTICA CONECTANDO ESTACIONES -->
+        <g stroke="url(#hazCinematico)" stroke-width="4.5" fill="none" filter="url(#glowFisica)" stroke-linecap="round">
+          <!-- M1 a M2 -->
+          <path d="M220,490 Q300,435 370,410" stroke-dasharray="8,6"/>
+          <!-- M2 a M3 -->
+          <path d="M470,420 Q530,445 590,500" stroke-dasharray="8,6"/>
+          <!-- M3 a M4 -->
+          <path d="M680,520 Q730,485 780,500" stroke-dasharray="8,6"/>
+          <!-- M4 a M5 (Subida por el templo hacia la cúpula) -->
+          <path d="M835,440 Q855,345 830,285" stroke-dasharray="8,6"/>
+          <!-- M5 a Epílogo Nave -->
+          <path d="M840,200 L910,95" stroke="#C084FC" stroke-width="4" stroke-dasharray="6,6"/>
+        </g>
+
+        <!-- ========================================================= -->
+        <!-- MÓDULO 1: MALOCA ANCESTRAL NIQUÍA (MRU · v = cte) -->
+        <!-- ========================================================= -->
+        <g class="map-node" id="nodoM1" onclick="abrirModalEstacion(1)">
+          <!-- Sombra amplia -->
+          <ellipse cx="170" cy="530" rx="75" ry="26" fill="rgba(0,0,0,0.4)"/>
+          
+          <!-- Maloca tradicional de madera y paja ceremonial -->
+          <polygon points="110,520 230,520 215,450 125,450" fill="#78350F" stroke="#451A03" stroke-width="2.5"/>
+          <!-- Maderos y grabados geométricos -->
+          <line x1="140" y1="520" x2="145" y2="450" stroke="#9A3412" stroke-width="2"/>
+          <line x1="170" y1="520" x2="170" y2="450" stroke="#9A3412" stroke-width="2"/>
+          <line x1="200" y1="520" x2="195" y2="450" stroke="#9A3412" stroke-width="2"/>
+          <!-- Techo cónico de palma tejida -->
+          <polygon points="95,460 170,350 245,460" fill="#D97706" stroke="#92400E" stroke-width="3"/>
+          <polygon points="120,455 170,365 220,455" fill="#FBBF24" opacity="0.6"/>
+          <!-- Corona cónica dorada -->
+          <polygon points="160,365 170,340 180,365" fill="#FEF08A"/>
+          <!-- Puerta con umbral resplandeciente cian -->
+          <rect x="152" y="465" width="36" height="55" rx="6" fill="#041814" stroke="#00F59B" stroke-width="2.5"/>
+          <rect x="158" y="472" width="24" height="48" rx="4" fill="#00F59B" opacity="0.85" filter="url(#glowFisica)"/>
+
+          <!-- Petroglifo tallado en piedra a la izquierda -->
+          <ellipse cx="80" cy="515" rx="22" ry="15" fill="#57534E" stroke="#292524" stroke-width="2"/>
+          <circle cx="80" cy="515" r="7" stroke="#FFD166" stroke-width="2" fill="none"/>
+          <line x1="80" y1="504" x2="80" y2="526" stroke="#FFD166" stroke-width="1.5"/>
+
+          <!-- TARJETA DESTACADA MÓDULO 1: GRANDE Y LEGIBLE PARA MÓVILES -->
+          <g class="map-tag" transform="translate(170, 595)">
+            <rect x="-135" y="-28" width="270" height="56" rx="16" fill="#06201B" stroke="#00F59B" stroke-width="2.5" filter="url(#glowOro)"/>
+            <!-- Disco Numérico Solar -->
+            <circle cx="-100" cy="0" r="18" fill="#FFD166" stroke="#B45309" stroke-width="2"/>
+            <text x="-100" y="7" font-family="'Archivo Black', sans-serif" font-size="20" font-weight="bold" fill="#78350F" text-anchor="middle">1</text>
+            <!-- Título y tema -->
+            <text x="-15" y="-6" font-family="'Archivo Black', sans-serif" font-size="14" fill="#FFFFFF" text-anchor="middle">MÓDULO 1: EL RASTRO</text>
+            <text x="-15" y="14" font-family="'Space Mono', monospace" font-size="10.5" font-weight="bold" fill="#00F59B" text-anchor="middle">M.R.U. · v = cte (a = 0)</text>
+          </g>
+        </g>
+
+        <!-- ========================================================= -->
+        <!-- MÓDULO 2: CANTERA Y MONOLITOS ANCESTRALES (MUA · a = cte) -->
+        <!-- ========================================================= -->
+        <g class="map-node" id="nodoM2" onclick="abrirModalEstacion(2)">
+          <!-- Sombra -->
+          <ellipse cx="430" cy="420" rx="80" ry="28" fill="rgba(0,0,0,0.4)"/>
+          
+          <!-- Monolitos y bloques de piedra escalonados -->
+          <polygon points="350,420 410,420 390,340 360,340" fill="#78716C" stroke="#44403C" stroke-width="2.5"/>
+          <polygon points="400,430 500,430 480,310 410,310" fill="#A8A29E" stroke="#57534E" stroke-width="3"/>
+          <polygon points="420,310 470,310 460,260 430,260" fill="#D6D3D1" stroke="#78716C" stroke-width="2.5"/>
+
+          <!-- Petroglifo del Sol y la Espiral de Aceleración -->
+          <circle cx="445" cy="355" r="18" fill="#57534E" stroke="#FFD166" stroke-width="3"/>
+          <path d="M445,343 A12,12 0 0,1 457,355 A8,8 0 0,1 445,363 A4,4 0 0,1 441,355" stroke="#FFD166" stroke-width="2.5" fill="none"/>
+          
+          <!-- Estela con número de aceleración brillante -->
+          <rect x="475" y="340" width="22" height="34" rx="4" fill="#1C1917" stroke="#FF5353" stroke-width="2"/>
+          <text x="486" y="363" font-family="'Space Mono', monospace" font-size="14" font-weight="bold" fill="#FF5353" text-anchor="middle">+a</text>
+
+          <!-- TARJETA DESTACADA MÓDULO 2: GRANDE Y LEGIBLE -->
+          <g class="map-tag" transform="translate(430, 245)">
+            <rect x="-145" y="-28" width="290" height="56" rx="16" fill="#06201B" stroke="#FFD166" stroke-width="2.5" filter="url(#glowOro)"/>
+            <!-- Disco Numérico Solar -->
+            <circle cx="-110" cy="0" r="18" fill="#FFD166" stroke="#B45309" stroke-width="2"/>
+            <text x="-110" y="7" font-family="'Archivo Black', sans-serif" font-size="20" font-weight="bold" fill="#78350F" text-anchor="middle">2</text>
+            <!-- Título y tema -->
+            <text x="-10" y="-6" font-family="'Archivo Black', sans-serif" font-size="13.5" fill="#FFFFFF" text-anchor="middle">MÓDULO 2: LA SOMBRA QUE HUYE</text>
+            <text x="-10" y="14" font-family="'Space Mono', monospace" font-size="10.5" font-weight="bold" fill="#FFD166" text-anchor="middle">M.U.A. · a = cte (Δv/Δt)</text>
+          </g>
+        </g>
+
+        <!-- ========================================================= -->
+        <!-- MÓDULO 3: DESFILADERO Y CASCADA SAGRADA (CAÍDA LIBRE) -->
+        <!-- ========================================================= -->
+        <g class="map-node" id="nodoM3" onclick="abrirModalEstacion(3)">
+          <!-- Sombra -->
+          <ellipse cx="640" cy="545" rx="70" ry="26" fill="rgba(0,0,0,0.45)"/>
+
+          <!-- Acantilado rocoso andino -->
+          <path d="M570,545 Q585,400 640,380 Q695,400 710,545 Z" fill="#64748B" stroke="#334155" stroke-width="3"/>
+          <!-- Boca de la cascada con tallado sagrado -->
+          <path d="M615,445 Q640,415 665,445 Q640,465 615,445 Z" fill="#0F172A"/>
+
+          <!-- Cascada vertical de agua pura con caída acelerada -->
+          <path d="M625,445 Q620,510 605,550 L675,550 Q660,510 655,445 Z" fill="#38BDF8" stroke="#0284C7" stroke-width="2" opacity="0.95"/>
+          <line x1="640" y1="445" x2="640" y2="550" stroke="#E0F2FE" stroke-width="2.5" stroke-dasharray="8,6"/>
+          
+          <!-- Estanque de impacto de agua cristalina -->
+          <ellipse cx="640" cy="550" rx="50" ry="16" fill="#0284C7" stroke="#38BDF8" stroke-width="2.5"/>
+
+          <!-- Objeto cayendo (Cálculo de gravedad g=9,8 m/s²) -->
+          <circle cx="640" cy="490" r="7" fill="#FFD166" stroke="#B45309" stroke-width="1.5" filter="url(#glowOro)"/>
+
+          <!-- TARJETA DESTACADA MÓDULO 3: GRANDE Y LEGIBLE -->
+          <g class="map-tag" transform="translate(640, 615)">
+            <rect x="-135" y="-28" width="270" height="56" rx="16" fill="#06201B" stroke="#00E5FF" stroke-width="2.5" filter="url(#glowOro)"/>
+            <!-- Disco Numérico Solar -->
+            <circle cx="-100" cy="0" r="18" fill="#00E5FF" stroke="#0369A1" stroke-width="2"/>
+            <text x="-100" y="7" font-family="'Archivo Black', sans-serif" font-size="20" font-weight="bold" fill="#082F49" text-anchor="middle">3</text>
+            <!-- Título y tema -->
+            <text x="-15" y="-6" font-family="'Archivo Black', sans-serif" font-size="14" fill="#FFFFFF" text-anchor="middle">MÓDULO 3: LO QUE CAE</text>
+            <text x="-15" y="14" font-family="'Space Mono', monospace" font-size="10.5" font-weight="bold" fill="#00E5FF" text-anchor="middle">CAÍDA LIBRE · g = 9,8 m/s²</text>
+          </g>
+        </g>
+
+        <!-- ========================================================= -->
+        <!-- MÓDULO 4: TEMPLO PIRAMIDAL CON FUEGO SAGRADO (PARABÓLICO) -->
+        <!-- ========================================================= -->
+        <g class="map-node" id="nodoM4" onclick="abrirModalEstacion(4)">
+          <!-- Sombra -->
+          <ellipse cx="850" cy="520" rx="75" ry="28" fill="rgba(0,0,0,0.45)"/>
+
+          <!-- Pirámide ceremonial escalonada andina (Pucará) -->
+          <polygon points="770,520 930,520 910,465 790,465" fill="#92400E" stroke="#451A03" stroke-width="2.5"/>
+          <polygon points="790,465 910,465 890,415 810,415" fill="#B45309" stroke="#451A03" stroke-width="2.5"/>
+          <polygon points="810,415 890,415 875,375 825,375" fill="#D97706" stroke="#451A03" stroke-width="2.5"/>
+
+          <!-- Escalera ceremonial central -->
+          <polygon points="835,520 865,520 860,375 840,375" fill="#78350F"/>
+
+          <!-- Pebeteros de fuego ceremonial sagrado -->
+          <!-- Pebetero Izquierdo -->
+          <rect x="770" y="475" width="14" height="20" fill="#292524"/>
+          <polygon points="777,455 768,475 786,475" fill="#EF4444"/>
+          <polygon points="777,462 771,475 783,475" fill="#FBBF24"/>
+
+          <!-- Pebetero Derecho -->
+          <rect x="916" y="475" width="14" height="20" fill="#292524"/>
+          <polygon points="923,455 914,475 932,475" fill="#EF4444"/>
+          <polygon points="923,462 917,475 929,475" fill="#FBBF24"/>
+
+          <!-- Fuego en la cima del templo -->
+          <polygon points="850,345 836,375 864,375" fill="#DC2626" filter="url(#glowOro)"/>
+          <polygon points="850,355 842,375 858,375" fill="#FDE047"/>
+
+          <!-- Vector parabólico de proyectil -->
+          <path d="M850,355 Q880,310 900,340" stroke="#FFD166" stroke-width="2.5" stroke-dasharray="4,4" fill="none"/>
+
+          <!-- TARJETA DESTACADA MÓDULO 4: GRANDE Y LEGIBLE -->
+          <g class="map-tag" transform="translate(850, 580)">
+            <rect x="-140" y="-28" width="280" height="56" rx="16" fill="#06201B" stroke="#FF6B6B" stroke-width="2.5" filter="url(#glowOro)"/>
+            <!-- Disco Numérico Solar -->
+            <circle cx="-105" cy="0" r="18" fill="#FF6B6B" stroke="#991B1B" stroke-width="2"/>
+            <text x="-105" y="7" font-family="'Archivo Black', sans-serif" font-size="20" font-weight="bold" fill="#450A0A" text-anchor="middle">4</text>
+            <!-- Título y tema -->
+            <text x="-10" y="-6" font-family="'Archivo Black', sans-serif" font-size="14" fill="#FFFFFF" text-anchor="middle">MÓDULO 4: EL ASALTO</text>
+            <text x="-10" y="14" font-family="'Space Mono', monospace" font-size="10.5" font-weight="bold" fill="#FF6B6B" text-anchor="middle">TIRO PARABÓLICO (2D)</text>
+          </g>
+        </g>
+
+        <!-- ========================================================= -->
+        <!-- MÓDULO 5: CÚPULA Y OBSERVATORIO DE LA CIMA (CIRCULAR) -->
+        <!-- ========================================================= -->
+        <g class="map-node" id="nodoM5" onclick="abrirModalEstacion(5)">
+          <!-- Sombra en la cumbre -->
+          <ellipse cx="830" cy="245" rx="46" ry="18" fill="rgba(0,0,0,0.5)"/>
+
+          <!-- Edificio de piedra y metal del observatorio andino -->
+          <rect x="805" y="180" width="50" height="55" rx="4" fill="#E2E8F0" stroke="#475569" stroke-width="2.5"/>
+          <rect x="822" y="205" width="16" height="30" rx="3" fill="#1E293B"/>
+
+          <!-- Cúpula semiesférica astronómica -->
+          <path d="M795,180 Q830,120 865,180 Z" fill="#CBD5E1" stroke="#334155" stroke-width="3"/>
+          <!-- Telescopio astronómico y reactor giratorio -->
+          <polygon points="845,155 885,105 897,114 857,164" fill="#6366F1" stroke="#312E81" stroke-width="2"/>
+          <ellipse cx="891" cy="110" rx="8" ry="5" fill="#00F59B" transform="rotate(-40, 891, 110)" filter="url(#glowFisica)"/>
+
+          <!-- Aro orbital de rotación continua -->
+          <ellipse cx="830" cy="170" rx="48" ry="16" stroke="#C084FC" stroke-width="2.5" stroke-dasharray="6,4" fill="none" filter="url(#glowFisica)"/>
+
+          <!-- TARJETA DESTACADA MÓDULO 5: GRANDE Y LEGIBLE -->
+          <g class="map-tag" transform="translate(830, 75)">
+            <rect x="-140" y="-28" width="280" height="56" rx="16" fill="#06201B" stroke="#C084FC" stroke-width="2.5" filter="url(#glowOro)"/>
+            <!-- Disco Numérico Solar -->
+            <circle cx="-105" cy="0" r="18" fill="#C084FC" stroke="#6B21A8" stroke-width="2"/>
+            <text x="-105" y="7" font-family="'Archivo Black', sans-serif" font-size="20" font-weight="bold" fill="#3B0764" text-anchor="middle">5</text>
+            <!-- Título y tema -->
+            <text x="-10" y="-6" font-family="'Archivo Black', sans-serif" font-size="14" fill="#FFFFFF" text-anchor="middle">MÓDULO 5: LA NAVE</text>
+            <text x="-10" y="14" font-family="'Space Mono', monospace" font-size="10.5" font-weight="bold" fill="#C084FC" text-anchor="middle">M.C.U. · a_c = v² / R</text>
+          </g>
+        </g>
+
+        <!-- ========================================================= -->
+        <!-- EPÍLOGO: NAVE NODRIZA ALIENÍGENA EN ÓRBITA -->
+        <!-- ========================================================= -->
+        <g class="map-node" id="nodoMF" onclick="abrirModalEstacion('F')">
+          <!-- Aura cósmica -->
+          <ellipse cx="925" cy="45" rx="55" ry="22" fill="rgba(192,132,252,0.35)" filter="url(#glowFisica)"/>
+          
+          <!-- Disco de la nave extraterrestre -->
+          <ellipse cx="925" cy="45" rx="42" ry="14" fill="#0F172A" stroke="#C084FC" stroke-width="2.5"/>
+          <ellipse cx="925" cy="38" rx="22" ry="9" fill="#FFD166" opacity="0.9" filter="url(#glowOro)"/>
+          <!-- Luces de anclaje -->
+          <circle cx="895" cy="46" r="3" fill="#00F59B"/>
+          <circle cx="910" cy="51" r="3" fill="#C084FC"/>
+          <circle cx="925" cy="53" r="3.5" fill="#00F59B"/>
+          <circle cx="940" cy="51" r="3" fill="#C084FC"/>
+          <circle cx="955" cy="46" r="3" fill="#00F59B"/>
+
+          <!-- Rótulo del Epílogo -->
+          <text x="925" y="18" font-family="'Archivo Black', sans-serif" font-size="14" font-weight="bold" fill="#FFD166" text-anchor="middle" filter="url(#glowOro)">★ EPÍLOGO</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- VISTA 2: LISTA DE MUNDOS EN TARJETAS (MODO COMPACTO) -->
+    <div class="mapa-lista-compacta" id="cajaListaCompacta">
+      <a class="lista-card" id="m1" href="mundo1-mru.html">
+        <div class="lista-num">1</div>
+        <div class="lista-info">
+          <div class="lista-tit">Módulo 1: El rastro</div>
+          <div class="lista-sub">La sombra avanza siempre igual en el Valle de Niquía. Aprende a medirla sin aceleración.</div>
+          <div class="lista-tag">MOVIMIENTO RECTILÍNEO UNIFORME · v = cte</div>
+        </div>
+      </a>
+      <a class="lista-card" id="m2" href="mundo2-mua.html">
+        <div class="lista-num">2</div>
+        <div class="lista-info">
+          <div class="lista-tit">Módulo 2: La sombra que huye</div>
+          <div class="lista-sub">En las laderas de Quitasol hay que ganar velocidad segundo a segundo con aceleración constante.</div>
+          <div class="lista-tag">MOVIMIENTO UNIFORMEMENTE ACELERADO · a = cte</div>
+        </div>
+      </a>
+      <a class="lista-card" id="m3" href="mundo3-caida-libre.html">
+        <div class="lista-num">3</div>
+        <div class="lista-info">
+          <div class="lista-tit">Módulo 3: Lo que cae</div>
+          <div class="lista-sub">En el desfiladero y cascada todo cae a g = 9,8 m/s² exactamente al mismo tiempo sin importar su masa.</div>
+          <div class="lista-tag">CAÍDA LIBRE Y GRAVEDAD · g = 9,8 m/s²</div>
+        </div>
+      </a>
+      <a class="lista-card" id="m4" href="mundo4-parabolico.html">
+        <div class="lista-num">4</div>
+        <div class="lista-info">
+          <div class="lista-tit">Módulo 4: El asalto</div>
+          <div class="lista-sub">Apunta con la honda a las 4 torres de anclaje: descompón la velocidad horizontal y vertical en el aire.</div>
+          <div class="lista-tag">MOVIMIENTO PARABÓLICO DE PROYECTILES</div>
+        </div>
+      </a>
+      <a class="lista-card" id="m5" href="mundo5-circular.html">
+        <div class="lista-num">5</div>
+        <div class="lista-info">
+          <div class="lista-tit">Módulo 5: La nave</div>
+          <div class="lista-sub">La cúpula y el reactor giran sin parar. Domina la aceleración centrípeta para ingresar y rescatar a tu familia.</div>
+          <div class="lista-tag">MOVIMIENTO CIRCULAR UNIFORME · a_c = v²/R</div>
+        </div>
+      </a>
+      <a class="lista-card" id="mF" href="final.html" style="border-color:rgba(192,132,252,.55);background:linear-gradient(90deg,rgba(26,20,56,.95) 0%,rgba(14,40,34,.95) 100%)">
+        <div class="lista-num est">★</div>
+        <div class="lista-info">
+          <div class="lista-tit" style="color:#FDE047">Epílogo: El reencuentro</div>
+          <div class="lista-sub">El emotivo desenlace cinemático al detener el motor de la nave y reunirte con Suri, Nara y el abuelo Bitagüí.</div>
+          <div class="lista-tag" style="color:var(--morado)">MISIÓN COMPLETADA · CINEMÁTICA TOTAL</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- DIÁLOGO DEL CACIQUE NIQUÍA EN EL MAPA (CON AVATAR ANDINO GENUINO) -->
+    <div class="mapa-cacique-hud">
+      <div class="cacique-avatar-wrap">
+        <!-- SVG VECTORIAL: CACIQUE NIQUÍA AUTÉNTICO CON TOCADO PLUMARIO ANDINO Y PECTORAL DE ORO -->
+        <svg class="cacique-avatar-svg" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="oroCacique" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FEF08A"/>
+              <stop offset="50%" stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#B45309"/>
+            </linearGradient>
+            <linearGradient id="pielAndina" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#D97706"/>
+              <stop offset="100%" stop-color="#92400E"/>
+            </linearGradient>
+          </defs>
+          
+          <!-- Fondo circular nocturno -->
+          <circle cx="50" cy="50" r="48" fill="#08231E"/>
+
+          <!-- PLUMAS DE TOCADO CEREMONIAL ANDINO (CÓNDOR Y GUACAMAYA) -->
+          <!-- Pluma Central Esmeralda y Oro -->
+          <path d="M50,8 Q44,22 50,38 Q56,22 50,8 Z" fill="#00F59B" stroke="#065F46" stroke-width="1.2"/>
+          <!-- Plumas Laterales Carmesí y Oro -->
+          <path d="M50,38 Q30,18 24,14 Q34,28 50,38 Z" fill="#EF4444" stroke="#991B1B" stroke-width="1.2"/>
+          <path d="M50,38 Q70,18 76,14 Q66,28 50,38 Z" fill="#EF4444" stroke="#991B1B" stroke-width="1.2"/>
+          <!-- Plumas Exteriores Turquesa y Ámbar -->
+          <path d="M50,38 Q18,28 10,24 Q24,36 50,38 Z" fill="#00E5FF" stroke="#0369A1" stroke-width="1.2"/>
+          <path d="M50,38 Q82,28 90,24 Q76,36 50,38 Z" fill="#00E5FF" stroke="#0369A1" stroke-width="1.2"/>
+
+          <!-- Corona frontal de oro precolombino Niquía -->
+          <path d="M22,40 Q50,32 78,40 L76,47 Q50,40 24,47 Z" fill="url(#oroCacique)" stroke="#78350F" stroke-width="1.2"/>
+          <circle cx="50" cy="38" r="4" fill="#00F59B" stroke="#065F46" stroke-width="1"/>
+          
+          <!-- Cabello negro ancestral -->
+          <path d="M24,46 Q16,70 20,84 Q34,70 30,55 Q50,52 70,55 Q66,70 80,84 Q84,70 76,46 Z" fill="#0F172A"/>
+
+          <!-- Rostro Noble del Cacique -->
+          <ellipse cx="50" cy="58" rx="20" ry="22" fill="url(#pielAndina)"/>
+          
+          <!-- Pintura facial ceremonial dorada -->
+          <path d="M34,56 Q50,60 66,56" stroke="#FEF08A" stroke-width="2" fill="none"/>
+          <circle cx="36" cy="56" r="1.5" fill="#FEF08A"/>
+          <circle cx="64" cy="56" r="1.5" fill="#FEF08A"/>
+
+          <!-- Cejas y ojos firmes -->
+          <path d="M36,50 Q42,48 46,51" stroke="#1E1B4B" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M64,50 Q58,48 54,51" stroke="#1E1B4B" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="42" cy="53" rx="3" ry="2" fill="#0F172A"/>
+          <ellipse cx="58" cy="53" rx="3" ry="2" fill="#0F172A"/>
+          <circle cx="42.5" cy="52.5" r="0.8" fill="#FFF"/>
+          <circle cx="58.5" cy="52.5" r="0.8" fill="#FFF"/>
+
+          <!-- Nariz y boca serena -->
+          <path d="M50,52 L48,61 L52,61" stroke="#78350F" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M44,68 Q50,71 56,68" stroke="#451A03" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+          <!-- Nariguera de oro -->
+          <circle cx="50" cy="62" r="3" fill="none" stroke="url(#oroCacique)" stroke-width="1.5"/>
+
+          <!-- Collar y Pectoral de Oro Precolombino (Poporo / Sol Sagrado) -->
+          <path d="M30,76 Q50,88 70,76 L66,95 Q50,102 34,95 Z" fill="url(#oroCacique)" stroke="#78350F" stroke-width="1.5"/>
+          <circle cx="50" cy="86" r="4.5" fill="#00F59B" stroke="#065F46" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="cacique-speech">
+        <div class="nom">EL CACIQUE NIQUÍA GUÍA TU VIAJE</div>
+        <p id="txtCaciqueMapa">Toca cualquier estación en el mapa para explorar sus secretos físicos o continuar tu travesía hacia la nave.</p>
+      </div>
+      <button class="btn-cacique-voz" id="bCaciqueVoz">🔊 CONSEJO</button>
+    </div>
+
+    <div class="mapa-pie">
+      <button class="ghost" id="bVerPro">Volver a ver el prólogo cinemático</button>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL POPUP DE INFORMACIÓN DE ESTACIÓN -->
+<div class="modal-estacion-backdrop" id="modalEstacionBackdrop" onclick="if(event.target===this) cerrarModalEstacion()">
+  <div class="modal-estacion">
+    <button class="modal-cerrar" onclick="cerrarModalEstacion()">✕</button>
+    <div class="modal-eyebrow" id="modEyebrow">ESTACIÓN DE EXPEDICIÓN</div>
+    <h2 class="modal-titulo" id="modTitulo">Módulo 1: El rastro</h2>
+    <div class="modal-tema" id="modTema">MOVIMIENTO RECTILÍNEO UNIFORME</div>
+    <p class="modal-desc" id="modDesc">La nave avanza a velocidad constante. Aprende a calcular distancias con la relación x = v·t.</p>
+    <div class="modal-formula" id="modFormula">
+      x = v · t &nbsp;·&nbsp; v = cte
+      <small>LA VELOCIDAD NO CAMBIA CON EL TIEMPO</small>
+    </div>
+    <a class="modal-btn-iniciar" id="modBtnIniciar" href="mundo1-mru.html">¡INICIAR ESTACIÓN! ▸</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============ estado ============ */
+const S={ jugador:'', voz:true, t:0, corriendo:false, linea:-1 };
+const $=id=>document.getElementById(id);
+function ver(p){ ['pPortada','pPro','pMapa'].forEach(x=>$(x).classList.toggle('ver',x===p));
+  $('cielo').style.display = p==='pPortada'? 'block':'none';
+  window.scrollTo(0,0); }
+
+/* ============ voz ============ */
+let voces=[];
+function cargarVoces(){ try{ voces=window.speechSynthesis.getVoices()||[]; }catch(e){ voces=[]; } }
+if(window.speechSynthesis){ cargarVoces(); window.speechSynthesis.onvoiceschanged=cargarVoces; }
+function hablar(txt){
+  if(!S.voz||!window.speechSynthesis) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(txt);
+    u.lang='es-CO'; u.rate=0.94; u.pitch=0.72; u.volume=1;
+    const es=voces.filter(v=>/^es/i.test(v.lang));
+    const hombre=es.find(v=>/(jorge|diego|carlos|miguel|pablo|enrique|juan|male|hombre|helena|no)/i.test(v.name)&&!/female|mujer|monica|paulina|marisol|esperanza/i.test(v.name));
+    const elegida=hombre||es[0];
+    if(elegida) u.voice=elegida;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function callar(){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+
+/* ============ cielo de la portada ============ */
+const cielo=$('cielo'), cc=cielo.getContext('2d');
+let CW=0,CH=0,estrellas=[];
+function medirCielo(){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  CW=window.innerWidth; CH=window.innerHeight;
+  cielo.width=CW*dpr; cielo.height=CH*dpr; cc.setTransform(dpr,0,0,dpr,0,0);
+  estrellas=[]; for(let i=0;i<90;i++) estrellas.push({x:Math.random()*CW,y:Math.random()*CH*0.72,
+    r:Math.random()*1.3+.3,f:Math.random()*6});
+}
+window.addEventListener('resize',medirCielo);
+function pintarCielo(t){
+  const g=cc.createLinearGradient(0,0,0,CH);
+  g.addColorStop(0,'#04110F'); g.addColorStop(.55,'#08211D'); g.addColorStop(1,'#0E332C');
+  cc.fillStyle=g; cc.fillRect(0,0,CW,CH);
+  estrellas.forEach(e=>{ cc.globalAlpha=.35+.45*Math.abs(Math.sin(t*1.1+e.f));
+    cc.fillStyle='#F2F6EF'; cc.beginPath(); cc.arc(e.x,e.y,e.r,0,7); cc.fill(); });
+  cc.globalAlpha=1;
+  // montañas
+  cc.fillStyle='#0A2620';
+  for(let k=0;k<7;k++){ const sx=k*CW/5-CW*0.12, h=CH*(.13+.05*((k*7)%3));
+    cc.beginPath(); cc.moveTo(sx-CW*.2,CH); cc.lineTo(sx,CH*.72-h); cc.lineTo(sx+CW*.2,CH); cc.fill(); }
+  // la nave, lejos y girando
+  const nx=CW*0.78, ny=CH*0.17, R=Math.min(CW,CH)*0.085;
+  cc.fillStyle='rgba(179,136,255,.10)';
+  cc.beginPath(); cc.ellipse(nx,ny,R*2.1,R*.9,0,0,7); cc.fill();
+  cc.fillStyle='#14232B';
+  cc.beginPath(); cc.ellipse(nx,ny,R,R*.32,0,0,7); cc.fill();
+  cc.fillStyle='#1B2E38';
+  cc.beginPath(); cc.ellipse(nx,ny-R*.16,R*.52,R*.26,0,0,7); cc.fill();
+  for(let i=0;i<7;i++){ const a=t*.7+i*Math.PI*2/7;
+    const lx=nx+Math.cos(a)*R*.86, ly=ny+Math.sin(a)*R*.27;
+    cc.globalAlpha=.45+.55*Math.max(0,Math.sin(a));
+    cc.fillStyle=i%2?'#B388FF':'#7CF29C';
+    cc.beginPath(); cc.arc(lx,ly,2.4,0,7); cc.fill(); }
+  cc.globalAlpha=1;
+}
+let t0=performance.now();
+function bucleCielo(now){
+  if($('cielo').style.display!=='none'){ pintarCielo((now-t0)/1000); }
+  requestAnimationFrame(bucleCielo);
+}
+
+/* ============ prólogo ============ */
+const cine=$('cine'), cx=cine.getContext('2d');
+let LW=900, LH=506, SC=1;
+function medirCine(){
+  const w=$('pPro').clientWidth||window.innerWidth;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const h=Math.round(Math.min(w*0.62, Math.max(200, window.innerHeight-260)));
+  cine.style.width=w+'px'; cine.style.height=h+'px';
+  cine.width=Math.round(w*dpr); cine.height=Math.round(h*dpr);
+  SC=(w*dpr)/LW; LH=cine.height/SC; cx.setTransform(SC,0,0,SC,0,0);
+}
+window.addEventListener('resize',medirCine);
+
+const GUION=[
+ { t:0.4,  q:'EL CACIQUE NIQUÍA CUENTA', l:'Una noche, sobre el valle de Niquía, bajó una luz que no hacía ruido.' },
+ { t:6.5,  q:'EL CACIQUE NIQUÍA CUENTA', l:'La nave se detuvo encima de la casa y abrió su haz sobre el techo. Los perros no ladraron.' },
+ { t:13.5, q:'EL CACIQUE NIQUÍA CUENTA', l:'Se llevó a la madre, al abuelo Bitagüí y a Suri, la hermana menor.' },
+ { t:20,   q:'EL CACIQUE NIQUÍA CUENTA', l:'Cuando Yaruma salió al patio, ya no había nadie adentro.' },
+ { t:26,   q:'EL CACIQUE NIQUÍA CUENTA', l:'Arriba, la nave giraba despacio. Abajo, su sombra se arrastraba por el suelo, moviéndose sola.' },
+ { t:33,   q:'EL CACIQUE NIQUÍA CUENTA', l:'Yaruma salió detrás de esa sombra. No tenía armas ni poderes: tenía piernas, una honda, y las palabras del Cacique Niquía.' },
+ { t:41,   q:'', l:'' }
+];
+const DUR=47;
+
+function empezarPro(){
+  ver('pPro'); medirCine(); S.t=0; S.linea=-1; S.corriendo=true;
+  GUION[GUION.length-1].l=(S.jugador? S.jugador+', la':'La')+' persecución empieza ahora.';
+  GUION[GUION.length-1].q='PRÓLOGO';
+  prev=performance.now();
+}
+function terminarPro(){ S.corriendo=false; callar(); irMapa(); }
+
+let prev=performance.now();
+function buclePro(now){
+  const dt=Math.min(.05,(now-prev)/1000); prev=now;
+  if(S.corriendo){
+    S.t+=dt;
+    for(let i=GUION.length-1;i>=0;i--){
+      if(S.t>=GUION[i].t && S.linea<i){ S.linea=i;
+        $('quien').textContent=GUION[i].q; $('linea').textContent=GUION[i].l;
+        if(GUION[i].l) hablar(GUION[i].l);
+        break; } }
+    pintarCine(S.t);
+    if(S.t>DUR) terminarPro();
+  }
+  requestAnimationFrame(buclePro);
+}
+
+function pintarCine(t){
+  const suelo=LH*0.80;
+  const g=cx.createLinearGradient(0,0,0,LH);
+  g.addColorStop(0,'#04110F'); g.addColorStop(.6,'#0A2620'); g.addColorStop(1,'#123F33');
+  cx.fillStyle=g; cx.fillRect(0,0,LW,LH);
+  for(let i=0;i<70;i++){ const x=(i*137.5)%LW, y=(i*61.7)%(suelo*0.8);
+    cx.globalAlpha=.25+.5*Math.abs(Math.sin(t*1.2+i)); cx.fillStyle='#F2F6EF';
+    cx.beginPath(); cx.arc(x,y,1.1,0,7); cx.fill(); }
+  cx.globalAlpha=1;
+  cx.fillStyle='#08211D';
+  for(let k=0;k<6;k++){ const sx=k*200-60, h=70+((k*53)%56);
+    cx.beginPath(); cx.moveTo(sx-140,suelo); cx.lineTo(sx,suelo-h); cx.lineTo(sx+140,suelo); cx.fill(); }
+  cx.fillStyle='#14453A'; cx.fillRect(0,suelo,LW,LH-suelo);
+  cx.fillStyle='#1B5A3C'; cx.fillRect(0,suelo-3,LW,5);
+
+  /* la nave */
+  const bajada=Math.min(1,Math.max(0,(t-1.5)/5));
+  const subida=Math.min(1,Math.max(0,(t-24)/6));
+  const salida=Math.min(1,Math.max(0,(t-30)/12));
+  const ny=-70+bajada*(LH*0.24+70)-subida*(LH*0.22);
+  const nx=LW*0.5+salida*LW*0.75;
+  const R=Math.min(LW,LH)*0.13;
+
+  /* haz de luz */
+  const haz=(t>6&&t<24)? Math.min(1,(t-6)/1.6)*(t>22? Math.max(0,(24-t)/2):1) : 0;
+  if(haz>0){
+    const hg=cx.createLinearGradient(0,ny,0,suelo);
+    hg.addColorStop(0,'rgba(179,136,255,'+(.45*haz)+')');
+    hg.addColorStop(1,'rgba(179,136,255,0.02)');
+    cx.fillStyle=hg; cx.beginPath();
+    cx.moveTo(nx-R*.5,ny); cx.lineTo(nx+R*.5,ny);
+    cx.lineTo(LW*0.30+R*1.5,suelo); cx.lineTo(LW*0.30-R*1.5,suelo);
+    cx.closePath(); cx.fill();
+  }
+  /* la casa */
+  const hx=LW*0.30;
+  cx.fillStyle='#3A2A1C'; cx.fillRect(hx-46,suelo-58,92,58);
+  cx.fillStyle='#5A3A20'; cx.beginPath();
+  cx.moveTo(hx-58,suelo-58); cx.lineTo(hx,suelo-92); cx.lineTo(hx+58,suelo-58); cx.closePath(); cx.fill();
+  const luzCasa=t<9?1:Math.max(0,1-(t-9)/2);
+  cx.fillStyle='rgba(255,201,60,'+(.25+.6*luzCasa)+')'; cx.fillRect(hx-14,suelo-42,28,24);
+  cx.fillStyle='#2A1E17'; cx.fillRect(hx+22,suelo-34,18,34);
+
+  /* la familia subiendo por el haz */
+  if(t>10&&t<23){
+    const p=Math.min(1,(t-10)/10);
+    [0,1,2].forEach(i=>{
+      const pp=Math.max(0,Math.min(1,p-i*0.13));
+      const y=suelo-10-pp*(suelo-ny-40);
+      const x=hx+(i-1)*26*(1-pp*0.6);
+      const esc=1-pp*0.55;
+      cx.globalAlpha=0.35+0.65*(1-pp*0.5);
+      cx.fillStyle=i===2?'#FFC93C':'#DCE7DF';
+      cx.beginPath(); cx.ellipse(x,y-16*esc,7*esc,17*esc,0,0,7); cx.fill();
+      cx.beginPath(); cx.arc(x,y-36*esc,7*esc,0,7); cx.fill();
+    });
+    cx.globalAlpha=1;
+  }
+  /* Yaruma sale al patio */
+  if(t>19){
+    const ap=Math.min(1,(t-19)/1.5);
+    const yx=hx+70+ap*26, yy=suelo;
+    cx.globalAlpha=ap;
+    cx.strokeStyle='#1D8E7A'; cx.lineWidth=5; cx.lineCap='round';
+    cx.beginPath(); cx.moveTo(yx,yy-22); cx.lineTo(yx-6,yy); cx.stroke();
+    cx.beginPath(); cx.moveTo(yx,yy-22); cx.lineTo(yx+6,yy); cx.stroke();
+    cx.fillStyle='#1D8E7A'; cx.beginPath(); cx.roundRect(yx-8,yy-44,16,24,7); cx.fill();
+    cx.fillStyle='#F2E6D2'; cx.beginPath(); cx.arc(yx+2,yy-52,8,0,7); cx.fill();
+    cx.fillStyle='#2A1E17'; cx.beginPath(); cx.arc(yx+2,yy-55,8,Math.PI,0); cx.fill();
+    cx.globalAlpha=1;
+  }
+  /* sombra de la nave arrastrándose por el suelo */
+  if(t>24){
+    const sx=LW*0.30+(t-24)*46;
+    cx.fillStyle='rgba(4,17,15,.55)';
+    cx.beginPath(); cx.ellipse(sx,suelo+10,R*1.7,R*.34,0,0,7); cx.fill();
+  }
+  /* cuerpo de la nave */
+  if(ny>-60){
+    cx.fillStyle='rgba(179,136,255,.09)';
+    cx.beginPath(); cx.ellipse(nx,ny,R*2.3,R*.95,0,0,7); cx.fill();
+    cx.fillStyle='#14232B'; cx.beginPath(); cx.ellipse(nx,ny,R,R*.3,0,0,7); cx.fill();
+    cx.fillStyle='#1B2E38'; cx.beginPath(); cx.ellipse(nx,ny-R*.15,R*.5,R*.25,0,0,7); cx.fill();
+    for(let i=0;i<8;i++){ const a=t*1.1+i*Math.PI/4;
+      const lx=nx+Math.cos(a)*R*.85, ly=ny+Math.sin(a)*R*.26;
+      cx.globalAlpha=.4+.6*Math.max(0,Math.sin(a));
+      cx.fillStyle=i%2?'#B388FF':'#7CF29C';
+      cx.beginPath(); cx.arc(lx,ly,2.6,0,7); cx.fill(); }
+    cx.globalAlpha=1;
+  }
+  /* viñeta */
+  const v=cx.createRadialGradient(LW/2,LH/2,LH*0.3,LW/2,LH/2,LH*0.95);
+  v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,.55)');
+  cx.fillStyle=v; cx.fillRect(0,0,LW,LH);
+}
+
+/* ============ mapa de aventura interactivo ============ */
+const ESTACIONES_DATA={
+  1:{ num:'1', tit:'Módulo 1: El rastro', sub:'Sector 1 · Valle de Niquía (1.450 msnm)', tema:'MOVIMIENTO RECTILÍNEO UNIFORME (M.R.U.)', desc:'En el Valle de Niquía, la sombra de la nave avanza a paso constante sin frenar ni acelerar. Aprende a calcular distancias y tiempos con velocidad uniforme.', form:'x = v · t &nbsp;·&nbsp; v = cte', formSub:'LA VELOCIDAD PERMANECE CONSTANTE (a = 0)', link:'mundo1-mru.html', audio:'Módulo uno: El rastro. Movimiento Rectilíneo Uniforme en el Valle de Niquía.' },
+  2:{ num:'2', tit:'Módulo 2: La sombra que huye', sub:'Sector 2 · Laderas de Quitasol (1.850 msnm)', tema:'MOVIMIENTO UNIFORMEMENTE ACELERADO (M.U.A.)', desc:'En las pendientes de Quitasol, la sombra acelera a ritmo constante. Aprende a calcular cómo cambia la velocidad segundo a segundo con aceleración uniforme.', form:'v = v_0 + a·t &nbsp;·&nbsp; x = v_0·t + ½·a·t²', formSub:'ACELERACIÓN CONSTANTE EN CADA SEGUNDO', link:'mundo2-mua.html', audio:'Módulo dos: La sombra que huye. Movimiento Uniformemente Acelerado.' },
+  3:{ num:'3', tit:'Módulo 3: Lo que cae', sub:'Sector 3 · Desfiladero y Cascada (2.310 msnm)', tema:'CAÍDA LIBRE · g = 9,8 m/s²', desc:'La nave deja caer provisiones y artefactos por el acantilado. La gravedad acelera todos los cuerpos exactamente por igual, sin importar su masa.', form:'v_f = g · t &nbsp;·&nbsp; h = ½ · g · t²', formSub:'ACELERACIÓN DE GRAVEDAD TERRESTRE', link:'mundo3-caida-libre.html', audio:'Módulo tres: Lo que cae. Caída libre y gravedad.' },
+  4:{ num:'4', tit:'Módulo 4: El asalto', sub:'Sector 4 · Templo de las Antorchas (3.100 msnm)', tema:'MOVIMIENTO PARABÓLICO DE PROYECTILES', desc:'Frente a las torres de anclaje, dispara con la honda calculando el ángulo de tiro y descomponiendo la velocidad en componente horizontal y vertical.', form:'v_x = v_0·cos(θ) &nbsp;·&nbsp; v_y = v_0·sin(θ) - g·t', formSub:'INDEPENDENCIA DE MOVIMIENTOS EN 2D', link:'mundo4-parabolico.html', audio:'Módulo cuatro: El asalto. Movimiento parabólico de proyectiles.' },
+  5:{ num:'5', tit:'Módulo 5: La nave', sub:'Sector 5 · Cúpula del Observatorio (3.800 msnm)', tema:'MOVIMIENTO CIRCULAR UNIFORME (M.C.U.)', desc:'En la cima del observatorio, ingresas al reactor rotatorio alienígena. Calcula la aceleración centrípeta y el período para cortar la rotación y salvar a tu familia.', form:'a_c = v² / R &nbsp;·&nbsp; v = 2π·R / T', formSub:'FUERZA Y ACELERACIÓN CENTRÍPETA', link:'mundo5-circular.html', audio:'Módulo cinco: La nave. Movimiento Circular Uniforme y aceleración centrípeta.' },
+  'F':{ num:'★', tit:'Epílogo: El reencuentro', sub:'Destino Final · Órbita de la Nave', tema:'CINEMÁTICA Y RESOLUCIÓN NARRATIVA', desc:'El reactor se apaga y las luces se encienden. Concluye la expedición cinemática y descubre el emotivo reencuentro de Yaruma y su familia.', form:'Δx, v, a, g, a_c &nbsp;➔&nbsp; MISIÓN COMPLETADA', formSub:'RESOLUCIÓN DE LA AVENTURA', link:'final.html', audio:'Destino final: El reencuentro.' }
+};
+
+window.abrirModalEstacion=function(id){
+  const d=ESTACIONES_DATA[id];
+  if(!d) return;
+  $('modEyebrow').textContent=d.sub.toUpperCase();
+  $('modTitulo').textContent=d.tit;
+  $('modTema').textContent=d.tema;
+  $('modDesc').textContent=d.desc;
+  $('modFormula').innerHTML=`${d.form}<small>${d.formSub}</small>`;
+  const q=S.jugador? '?j='+encodeURIComponent(S.jugador):'';
+  $('modBtnIniciar').setAttribute('href', d.link+q);
+  $('modalEstacionBackdrop').classList.add('abierto');
+  if(d.audio) hablar(d.audio);
+};
+
+window.cerrarModalEstacion=function(){
+  $('modalEstacionBackdrop').classList.remove('abierto');
+};
+
+function irMapa(){
+  ver('pMapa');
+  const nom=S.jugador||'viajero';
+  $('nMapa').textContent=nom;
+  $('txtCaciqueMapa').textContent=`¡Adelante, ${nom}! Toca cualquier sector del mapa para ver los secretos del movimiento o continuar tu expedición.`;
+  const q=S.jugador? '?j='+encodeURIComponent(S.jugador):'';
+  ['m1','m2','m3','m4','m5','mF'].forEach((id,i)=>{
+    const base=['mundo1-mru.html','mundo2-mua.html','mundo3-caida-libre.html',
+                'mundo4-parabolico.html','mundo5-circular.html','final.html'][i];
+    $(id).setAttribute('href', base+q);
+  });
+}
+
+// Conmutadores de vista del mapa
+$('bVistaMapa').onclick=function(){
+  this.classList.add('act'); $('bVistaLista').classList.remove('act');
+  $('cajaMapaGrafico').style.display='block'; $('cajaListaCompacta').classList.remove('ver');
+};
+$('bVistaLista').onclick=function(){
+  this.classList.add('act'); $('bVistaMapa').classList.remove('act');
+  $('cajaMapaGrafico').style.display='none'; $('cajaListaCompacta').classList.add('ver');
+};
+
+$('bCaciqueVoz').onclick=function(){
+  const nom=S.jugador||'viajero';
+  hablar(`Bienvenido, ${nom}. Este es el mapa de la física-aventura en el Cerro Quitasol. Hay cinco mundos entre tú y la nave. Toca una estación para comenzar.`);
+};
+
+/* ============ enlaces ============ */
+$('bEmpezar').onclick=()=>{ S.jugador=$('nombre').value.trim(); guardar(); empezarPro(); };
+$('bSaltarPro').onclick=()=>{ S.jugador=$('nombre').value.trim(); guardar(); irMapa(); };
+$('bSaltar').onclick=terminarPro;
+$('bVerPro').onclick=empezarPro;
+$('bVoz').onclick=function(){ S.voz=!S.voz; this.classList.toggle('on',S.voz);
+  this.textContent=S.voz?'🔊 VOZ':'🔇 VOZ'; if(!S.voz) callar();
+  else if(S.linea>=0&&GUION[S.linea].l) hablar(GUION[S.linea].l); };
+$('nombre').addEventListener('keydown',e=>{ if(e.key==='Enter') $('bEmpezar').click(); });
+function guardar(){ try{ if(S.jugador) localStorage.setItem('fa_jugador',S.jugador); }catch(e){} }
+
+try{
+  const g=localStorage.getItem('fa_jugador');
+  if(g){ $('nombre').value=g; S.jugador=g; }
+}catch(e){}
+
+const url=new URLSearchParams(location.search);
+if(url.get('j')){
+  const jVal=String(url.get('j')).replace(/[<>&"']/g,'').slice(0,22);
+  $('nombre').value=jVal;
+  S.jugador=jVal;
+  guardar();
+}
+
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r!=='number') r=0;
+    this.beginPath(); this.moveTo(x+r,y); this.lineTo(x+w-r,y);
+    this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r);
+    this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h);
+    this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r);
+    this.quadraticCurveTo(x,y,x+r,y); this.closePath(); return this; };
+}
+medirCielo(); medirCine();
+requestAnimationFrame(bucleCielo); requestAnimationFrame(buclePro);
+
+// Si la URL pide ir al mapa (?mapa, ?m, #mapa, #m, etc.), abrir directamente el mapa
+if(url.get('mapa')!==null || url.get('m')!==null || url.get('directo')!==null || location.hash==='#mapa' || location.hash==='#m'){
+  irMapa();
+}
+window.addEventListener('hashchange',()=>{
+  if(location.hash==='#mapa' || location.hash==='#m') irMapa();
+});
+})();
+</script>
+</body>
+</html>

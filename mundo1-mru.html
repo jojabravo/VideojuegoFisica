@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>La Física-Aventura · Mundo 1: Movimiento Rectilíneo Uniforme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --selva:#08211D;
+  --selva2:#0E332C;
+  --musgo:#174C3E;
+  --lima:#7CF29C;
+  --oro:#FFC93C;
+  --arcilla:#E2673C;
+  --hueso:#F2F6EF;
+  --niebla:#9FBAB0;
+  --display:'Archivo Black', Impact, 'Haettenschweiler', sans-serif;
+  --texto:'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --dato:'Space Mono', ui-monospace, 'Courier New', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--selva);
+  color:var(--hueso);
+  font-family:var(--texto);
+  overflow-x:hidden;
+  display:flex;flex-direction:column;align-items:center;
+  padding:0 0 env(safe-area-inset-bottom);
+}
+#app{width:100%;max-width:960px;display:flex;flex-direction:column;min-height:100%}
+
+/* ---------- Barra superior ---------- */
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-bottom:1px solid rgba(124,242,156,.18);
+  background:linear-gradient(180deg,#0B2A24,#08211D);
+}
+.brand{font-family:var(--display);font-size:13px;letter-spacing:.02em;line-height:1.05}
+.brand small{display:block;font-family:var(--dato);font-size:9px;color:var(--lima);letter-spacing:.14em}
+.topbar .sp{flex:1}
+.iconbtn{
+  background:rgba(124,242,156,.09);border:1px solid rgba(124,242,156,.25);
+  color:var(--hueso);border-radius:9px;padding:7px 10px;font-family:var(--dato);
+  font-size:11px;cursor:pointer;
+}
+.iconbtn:active{transform:scale(.96)}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:rgba(124,242,156,.14);
+}
+.cell{background:#0B2A24;padding:6px 8px}
+.cell .lab{font-family:var(--dato);font-size:8.5px;letter-spacing:.13em;color:var(--niebla)}
+.cell .val{font-family:var(--dato);font-weight:700;font-size:15px;color:var(--hueso);line-height:1.25}
+.cell .val em{font-style:normal;font-size:10px;color:var(--niebla)}
+.cell.v .val{color:var(--lima)}
+.cell.oro .val{color:var(--oro)}
+
+/* ---------- Ecuación viva (elemento firma) ---------- */
+.eq{
+  display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  background:#061A17;border-bottom:1px solid rgba(124,242,156,.18);
+  padding:7px 10px;font-family:var(--dato);font-size:13px;letter-spacing:.01em;
+}
+.eq b{color:var(--lima);font-weight:700}
+.eq .t{color:var(--oro)}
+.eq .r{color:var(--hueso);background:rgba(124,242,156,.12);padding:2px 8px;border-radius:6px}
+.eq .op{color:var(--niebla)}
+
+/* ---------- Canvas ---------- */
+#wrap{position:relative;width:100%;background:#061A17;line-height:0}
+canvas{display:block;width:100%;touch-action:none}
+.hearts{
+  position:absolute;top:8px;left:10px;display:flex;gap:4px;line-height:1;
+  font-size:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))
+}
+.tag{
+  position:absolute;top:8px;right:10px;
+  font-family:var(--dato);font-size:10px;letter-spacing:.1em;
+  background:rgba(6,26,23,.75);border:1px solid rgba(124,242,156,.3);
+  color:var(--lima);padding:4px 8px;border-radius:20px;
+}
+
+/* ---------- Controles ---------- */
+.pad{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px 14px}
+.pad button{
+  font-family:var(--display);font-size:17px;letter-spacing:.02em;
+  padding:16px 8px;border-radius:14px;border:none;cursor:pointer;
+  color:#06201B;background:var(--lima);
+  box-shadow:0 4px 0 #3FAE72;
+  transition:transform .06s, box-shadow .06s;
+}
+.pad button.sec{background:var(--oro);box-shadow:0 4px 0 #C1901F}
+.pad button:active{transform:translateY(4px);box-shadow:0 0 0 #3FAE72}
+.pad span{display:block;font-family:var(--dato);font-size:9px;letter-spacing:.1em;opacity:.65;margin-top:3px}
+
+/* ---------- Pantallas / paneles ---------- */
+.screen{
+  position:fixed;inset:0;z-index:40;
+  background:rgba(4,17,15,.94);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-start;justify-content:center;
+  overflow-y:auto;padding:18px 14px 40px;
+}
+.screen[hidden]{display:none}
+.card{
+  width:100%;max-width:560px;background:linear-gradient(180deg,#0E332C,#0A2620);
+  border:1px solid rgba(124,242,156,.22);border-radius:18px;padding:20px 18px;
+  margin:auto 0;
+}
+.eyebrow{font-family:var(--dato);font-size:10px;letter-spacing:.22em;color:var(--lima)}
+h1{font-family:var(--display);font-size:clamp(26px,7vw,40px);line-height:.95;margin:6px 0 4px;letter-spacing:-.01em}
+h1 .acc{color:var(--oro)}
+h2{font-family:var(--display);font-size:20px;line-height:1.05;margin:2px 0 10px}
+p{font-size:14.5px;line-height:1.55;color:#DCE7DF}
+.lead{color:var(--niebla);font-size:14px;line-height:1.5;margin-bottom:14px}
+
+.cta{
+  width:100%;margin-top:14px;padding:15px;border:none;border-radius:14px;cursor:pointer;
+  font-family:var(--display);font-size:18px;color:#06201B;background:var(--lima);
+  box-shadow:0 4px 0 #3FAE72;
+}
+.cta:active{transform:translateY(4px);box-shadow:none}
+.ghost{
+  width:100%;margin-top:8px;padding:12px;border-radius:12px;cursor:pointer;
+  background:transparent;border:1px solid rgba(124,242,156,.3);color:var(--hueso);
+  font-family:var(--dato);font-size:12px;letter-spacing:.06em;
+}
+
+/* Selector de tramos */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{
+  font-family:var(--dato);font-size:11px;padding:8px 10px;border-radius:10px;cursor:pointer;
+  background:rgba(124,242,156,.08);border:1px solid rgba(124,242,156,.25);color:var(--hueso);
+}
+.chip b{color:var(--lima)}
+.chip:active{background:rgba(124,242,156,.2)}
+
+/* Tabla de datos */
+.datos{width:100%;border-collapse:collapse;margin:12px 0;font-family:var(--dato);font-size:13px}
+.datos td{padding:8px 6px;border-bottom:1px dashed rgba(124,242,156,.18)}
+.datos td:first-child{color:var(--niebla);font-size:11px;letter-spacing:.06em}
+.datos td:last-child{text-align:right;font-weight:700}
+.hi{color:var(--lima)}
+.hi2{color:var(--oro)}
+
+.formula{
+  font-family:var(--dato);font-size:15px;text-align:center;
+  background:#061A17;border:1px solid rgba(124,242,156,.2);
+  border-radius:12px;padding:12px 8px;margin:6px 0 14px;color:var(--lima)
+}
+.formula small{display:block;color:var(--niebla);font-size:10.5px;margin-top:5px;letter-spacing:.08em}
+
+/* Pregunta */
+.q{background:#061A17;border:1px solid rgba(226,103,60,.4);border-radius:14px;padding:14px;margin-top:8px}
+.q .num{font-family:var(--dato);font-size:10px;letter-spacing:.18em;color:var(--arcilla)}
+.q p{margin:6px 0 10px;font-size:14.5px}
+.opt{
+  display:block;width:100%;text-align:left;margin-bottom:7px;padding:11px 12px;
+  border-radius:11px;border:1px solid rgba(124,242,156,.22);background:rgba(124,242,156,.05);
+  color:var(--hueso);font-family:var(--texto);font-size:14px;cursor:pointer;line-height:1.35;
+}
+.opt b{font-family:var(--dato);color:var(--lima);margin-right:7px}
+.opt.ok{background:rgba(124,242,156,.22);border-color:var(--lima)}
+.opt.no{background:rgba(226,103,60,.18);border-color:var(--arcilla)}
+.fb{font-size:13.5px;line-height:1.5;margin-top:8px;padding:10px;border-radius:10px;background:rgba(124,242,156,.08)}
+.fb.bad{background:rgba(226,103,60,.14)}
+
+canvas.graf{width:100%;height:auto;border-radius:12px;background:#061A17;border:1px solid rgba(124,242,156,.2);margin:10px 0}
+.leg{display:flex;gap:14px;font-family:var(--dato);font-size:10.5px;color:var(--niebla);margin-bottom:6px}
+.leg i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.note{font-size:12.5px;color:var(--niebla);line-height:1.5;margin-top:10px}
+.escena{background:#061A17;border-left:3px solid var(--morado,#B388FF);border-radius:0 12px 12px 0;
+  padding:13px 15px;margin:12px 0;font-size:14px;line-height:1.65;color:#DCE7DF}
+.escena .dice{color:var(--oro)}
+.foot{padding:10px 14px 22px;text-align:center;font-family:var(--dato);font-size:10px;color:#43604F;letter-spacing:.08em}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand">LA FÍSICA-AVENTURA<small>MUNDO 1 · EL RASTRO</small></div>
+    <div class="sp"></div>
+    <button class="iconbtn" id="btnSound">♪ ON</button>
+    <button class="iconbtn" id="btnMenu">MENÚ</button>
+  </div>
+
+  <div class="hud">
+    <div class="cell v"><div class="lab">VELOCIDAD</div><div class="val" id="hV">0,0 <em>m/s</em></div></div>
+    <div class="cell"><div class="lab">TIEMPO</div><div class="val" id="hT">0,0 <em>s</em></div></div>
+    <div class="cell"><div class="lab">POSICIÓN</div><div class="val" id="hX">0 <em>m</em></div></div>
+    <div class="cell oro"><div class="lab">MONEDAS</div><div class="val" id="hC">0</div></div>
+  </div>
+
+  <div class="eq" id="eqbar">
+    <span>x</span><span class="op">=</span><b id="eqV">1,5 m/s</b><span class="op">×</span>
+    <span class="t" id="eqT">0,0 s</span><span class="op">=</span><span class="r" id="eqX">0,0 m</span>
+  </div>
+
+  <div id="wrap">
+    <canvas id="cv"></canvas>
+    <div class="hearts" id="hearts"></div>
+    <div class="tag" id="tag">TRAMO 1 · CAMINANDO</div>
+  </div>
+
+  <div class="pad">
+    <button id="bJump">SALTAR<span>ESPACIO / ↑</span></button>
+    <button id="bDuck" class="sec">AGACHARSE<span>MANTENER / ↓</span></button>
+  </div>
+
+  <div class="foot">I.E. JOSEFA CAMPOS · BELLO, ANTIOQUIA · PREPARACIÓN SABER 11</div>
+</div>
+
+<!-- ============ PANTALLA DE INICIO ============ -->
+<div class="screen" id="scMenu">
+  <div class="card">
+    <div class="eyebrow">MUNDO 1 DE 5 · CINEMÁTICA</div>
+    <h1>Movimiento<br>rectilíneo <span class="acc">uniforme</span></h1>
+    <div class="escena">Cuando Yaruma llegó al camino, la sombra de la nave ya iba lejos.<br>
+      No corría. No se apuraba. Avanzaba lo mismo cada segundo, como si el tiempo le perteneciera.<br>
+      <span class="dice">—Primero mírala —dijo el Cacique Niquía—. Todavía no la persigas.</span><br>
+      —¿Y qué gano con mirarla?<br>
+      <span class="dice">—Que aprendas cuánto avanza en un segundo. Eso es todo lo que necesitas saber hoy.</span></div>
+    <p class="lead">Yaruma cruza la pista del Cacique Niquía en seis tramos. En cada tramo su velocidad es <b>constante</b>: no acelera ni frena. Lo único que cambia entre un tramo y otro es el medio de transporte.</p>
+
+    <div class="formula">x = v · t<small>LA POSICIÓN CRECE EN PARTES IGUALES EN TIEMPOS IGUALES</small></div>
+
+    <table class="datos">
+      <tr><td>SALTAR</td><td>toca la pantalla, espacio o ↑</td></tr>
+      <tr><td>AGACHARSE</td><td>mantén el botón, ↓ o desliza abajo</td></tr>
+      <tr><td>OBJETIVO</td><td class="hi">recoge monedas y esquiva</td></tr>
+      <tr><td>OJO</td><td class="hi2">chocar NO te frena</td></tr>
+    </table>
+
+    <button class="cta" id="bStart">EMPEZAR EL TRAMO 1</button>
+    <div class="chips" id="chips"></div>
+    <p class="note">Cada tramo termina en una <b>estación de datos</b>: allí ves tu velocidad, tu tiempo, tu distancia y una pregunta tipo Saber 11.</p>
+  </div>
+</div>
+
+<!-- ============ ESTACIÓN DE DATOS ============ -->
+<div class="screen" id="scPanel" hidden>
+  <div class="card" id="panelCard"></div>
+</div>
+
+<!-- ============ FIN DEL MUNDO ============ -->
+<div class="screen" id="scEnd" hidden>
+  <div class="card" id="endCard"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= CONFIGURACIÓN ================= */
+const LW = 900;                 // ancho lógico del canvas
+const CHAR_X = 210;             // x en pantalla donde va Yaruma
+const T_AIR = 0.85;             // duración del salto (s) — igual para todos
+const JUMP_H = 132;             // altura del salto (px)
+const OBST_H = 34;              // altura del obstáculo bajo (px)
+const DUCK_S = 0.48;            // factor de altura al agacharse
+const NAT = { walk:{w:40,h:80}, run:{w:44,h:80}, skate:{w:52,h:92},
+              bike:{w:72,h:112}, moto:{w:86,h:108}, ferrari:{w:100,h:46} };
+
+const SEGS = [
+ { n:1, key:'walk', name:'Caminando por Niquía', v:1.5, dist:24, A:150, high:false,
+   bioma:'La vereda de Niquía', obs:'charcos sagrados', obsHigh:'ramas de palma',
+   sky:['#7FCFE3','#CFEDDC'], tierra:'#7A4A2B', pasto:'#3FAE5A', lejos:'#8FB6A8', medio:'#2E7D52',
+   q:{ t:'Yaruma camina con velocidad constante de 1,5 m/s por el sendero ancestral. Si mantiene esa velocidad, ¿qué distancia recorre en 1 minuto?',
+       o:['25 m','90 m','1,5 m','40 m'], c:1,
+       e:'En MRU, x = v · t. Como 1 minuto = 60 s: x = 1,5 m/s × 60 s = 90 m. El error típico es dividir (60 ÷ 1,5 = 40) en vez de multiplicar.' } },
+
+ { n:2, key:'run', name:'Carrera por el Bosque', v:5, dist:60, A:225, high:true,
+   bioma:'El bosque de Guayacanes', obs:'troncos sagrados', obsHigh:'bejucos colgantes',
+   sky:['#6FC3DF','#C6E9D6'], tierra:'#6E4326', pasto:'#37A052', lejos:'#7EA99B', medio:'#256B47',
+   q:{ t:'Yaruma corre a 5 m/s constantes hacia el Cerro Quitasol y debe recorrer 60 m. ¿Cuánto tiempo tarda?',
+       o:['300 s','12 s','65 s','0,08 s'], c:1,
+       e:'De x = v · t se despeja t = x ÷ v = 60 m ÷ 5 m/s = 12 s. Fíjate en las unidades: metros entre metros por segundo da segundos.' } },
+
+ { n:3, key:'skate', name:'Tabla de Guayacán', v:8, dist:96, A:270, high:true,
+   bioma:'Sendero de Piedra Real', obs:'petroglifos', obsHigh:'arcos de piedra',
+   sky:['#63B8DC','#BFE4D9'], tierra:'#5F5F66', pasto:'#3E9A5C', lejos:'#7FA6A0', medio:'#2A7350',
+   q:{ t:'En la gráfica de posición contra tiempo (x vs t) de este tramo sobre la tabla de madera, ¿qué representa la pendiente de la recta?',
+       o:['La aceleración de Yaruma','La velocidad de Yaruma','El tiempo total del tramo','La distancia total del tramo'], c:1,
+       e:'La pendiente es Δx/Δt, que es justamente la definición de velocidad. Como la recta es inclinada pero recta, la velocidad es constante: 8 m/s.' } },
+
+ { n:4, key:'bike', name:'Bici de Guadua y Oro', v:12, dist:150, A:310, high:true,
+   bioma:'Ribera del Río Aburrá', obs:'vasijas de barro', obsHigh:'portales de caña',
+   sky:['#59A9D6','#B4DCD4'], tierra:'#4A4A55', pasto:'#38915A', lejos:'#759C9B', medio:'#256848',
+   q:{ t:'¿Cómo se ve la gráfica de velocidad contra tiempo (v vs t) mientras Yaruma va en su bici de guadua a 12 m/s?',
+       o:['Una recta inclinada que sube','Una recta horizontal en 12 m/s','Una parábola','Una recta que pasa por el origen'], c:1,
+       e:'Si la velocidad no cambia, su gráfica es una línea horizontal. Una recta inclinada en v vs t significaría aceleración, y eso ya es otro tipo de movimiento (Mundo 2).' } },
+
+ { n:5, key:'moto', name:'Bólido del Quitasol', v:25, dist:275, A:345, high:true,
+   bioma:'Camino Ceremonial', obs:'tambores sagrados', obsHigh:'puentes de liana',
+   sky:['#4E9BCE','#A9D3CE'], tierra:'#3E3E48', pasto:'#2F8551', lejos:'#6C9294', medio:'#215F43',
+   q:{ t:'Yaruma va en el bólido ceremonial a 25 m/s constantes. ¿A cuántos kilómetros por hora equivale esa velocidad?',
+       o:['25 km/h','90 km/h','6,9 km/h','1500 km/h'], c:1,
+       e:'Se multiplica por 3,6: 25 × 3,6 = 90 km/h. Viene de pasar metros a kilómetros (÷1000) y segundos a horas (×3600).' } },
+
+ { n:6, key:'ferrari', name:'Carroza Solar de Oro', v:60, dist:660, A:375, high:true,
+   bioma:'Pista Sagrada del Sol', obs:'estelas de oro', obsHigh:'pórticos solares',
+   sky:['#3F86BF','#9AC6C9'], tierra:'#33333C', pasto:'#2A784B', lejos:'#5F8489', medio:'#1D543C',
+   q:{ t:'Dos vehículos ancestrales parten juntos con MRU: la balsa A va a 20 m/s y la carroza solar B a 60 m/s. Después del mismo tiempo, la distancia recorrida por B es…',
+       o:['igual a la de A','el doble de la de A','el triple de la de A','no se puede saber'], c:2,
+       e:'Con el mismo t, x = v · t hace que las distancias sean proporcionales a las velocidades: 60 ÷ 20 = 3. B recorre el triple. En la gráfica x vs t, la recta de B es tres veces más inclinada.' } }
+];
+
+/* Valores derivados: todo el juego se calcula a partir de la velocidad real */
+SEGS.forEach(g=>{
+  g.scale = g.A/g.v;                 // px por metro (zoom de la cámara)
+  g.J     = g.A*T_AIR;               // avance del salto, en px
+  g.drawW = 0.28*g.J;                // ancho dibujado de Yaruma
+  g.k     = g.drawW/NAT[g.key].w;    // factor de dibujo
+  g.chH   = NAT[g.key].h*g.k;        // alto de Yaruma en px
+  g.gap   = Math.round(0.80*g.chH);  // luz libre bajo el obstáculo colgante
+  g.owM   = 0.17*g.v*T_AIR;          // ancho del obstáculo, en metros
+  g.hwM   = 0.12*g.v*T_AIR;          // semiancho de choque de Yaruma, en metros
+});
+
+/* ================= ESTADO ================= */
+const S = {
+  screen:'menu', seg:0, t:0, x:0, coins:0, hearts:3, hits:0,
+  jump:-1, duck:false, inv:0, shake:0, flash:0, anim:0,
+  obs:[], mon:[], graf:[], done:[], totalT:0, totalX:0, sound:true, popups:[], marcar:false
+};
+
+/* ================= AUDIO ================= */
+let AC=null;
+function beep(f,d,type,vol){
+  if(!S.sound) return;
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.type=type||'square'; o.frequency.value=f;
+    g.gain.setValueAtTime(vol||0.05, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime+d);
+    o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime+d);
+  }catch(e){}
+}
+const sfx = {
+  coin(){ beep(1180,.09,'square',.045); setTimeout(()=>beep(1560,.09,'square',.04),55); },
+  jump(){ beep(420,.11,'triangle',.05); },
+  hit(){ beep(150,.22,'sawtooth',.07); },
+  win(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.16,'triangle',.06), i*110)); }
+};
+
+/* ================= CANVAS ================= */
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let SC=1, LH=506;
+function resize(){
+  const wrap = document.getElementById('wrap');
+  const w = wrap.clientWidth;
+  let h = Math.round(w*0.545);
+  const maxH = Math.max(210, window.innerHeight - 300);
+  if(h > maxH) h = maxH;
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  cv.style.height = h+'px';
+  cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+  SC = (w*dpr)/LW;
+  LH = cv.height/SC;
+  ctx.setTransform(SC,0,0,SC,0,0);
+}
+window.addEventListener('resize', resize);
+
+const groundY = ()=> LH - 66;
+
+/* ================= UTILIDADES ================= */
+function rnd(k){ const s=Math.sin(k*127.1)*43758.5453; return s-Math.floor(s); }
+function fmt(n,d){ return n.toFixed(d===undefined?1:d).replace('.', ','); }
+function pasoRegla(scale){
+  const cand=[1,2,5,10,20,25,50,100,200,500];
+  for(const c of cand){ if(c*scale>=64) return c; }
+  return 1000;
+}
+
+/* ================= GENERACIÓN DEL TRAMO ================= */
+function construir(i){
+  const g = SEGS[i];
+  const ow = g.owM;                    // ancho del obstáculo en metros
+  const obs=[], mon=[];
+  let x = g.v*2.6;                     // 2,6 s de pista libre al arrancar
+  const fin = g.dist - g.v*1.6;
+  let k=0;
+  while(x < fin){
+    const esAlto = g.high && (k%3===2);
+    obs.push({ x:x, w: esAlto? ow*1.35 : ow, alto: esAlto });
+    if(esAlto){
+      for(let j=0;j<3;j++) mon.push({ x:x + ow*0.35*j, y:24, ok:false });
+    }else{
+      const span = g.v*T_AIR;
+      for(let j=0;j<3;j++){
+        const f=(j+1)/4;
+        mon.push({ x: x - span*0.18 + span*f, y: 44 + 4*JUMP_H*f*(1-f)*0.62, ok:false });
+      }
+    }
+    if(rnd(k+i*17)>0.45) mon.push({ x:x + g.v*1.1, y:22, ok:false });
+    x += g.v*(1.7 + rnd(k+i*31)*1.2);
+    k++;
+  }
+  S.obs=obs; S.mon=mon;
+}
+
+function iniciarTramo(i){
+  S.seg=i; S.t=0; S.x=0; S.hearts=3; S.hits=0; S.coins=0;
+  S.jump=-1; S.duck=false; S.inv=0; S.shake=0; S.flash=0; S.popups=[];
+  construir(i);
+  S.screen='play';
+  document.getElementById('tag').textContent = 'TRAMO '+SEGS[i].n+' · '+SEGS[i].name.toUpperCase();
+  document.getElementById('eqV').textContent = fmt(SEGS[i].v,1)+' m/s';
+  hideAll();
+  resize();
+}
+
+/* ================= ENTRADAS ================= */
+function saltar(){
+  if(S.screen!=='play') return;
+  if(S.jump<0){ S.jump=0; S.duck=false; sfx.jump(); }
+}
+function agachar(v){ if(S.screen==='play'){ if(v && S.jump<0) S.duck=true; else if(!v) S.duck=false; } }
+
+document.getElementById('bJump').addEventListener('pointerdown', e=>{e.preventDefault(); saltar();});
+const bd = document.getElementById('bDuck');
+bd.addEventListener('pointerdown', e=>{e.preventDefault(); agachar(true);});
+['pointerup','pointercancel','pointerleave'].forEach(ev=> bd.addEventListener(ev, ()=>agachar(false)));
+
+let touchY=null;
+cv.addEventListener('pointerdown', e=>{
+  e.preventDefault(); touchY=e.clientY;
+  if(e.clientX > cv.getBoundingClientRect().width*0.55) agachar(true); else saltar();
+});
+cv.addEventListener('pointermove', e=>{
+  if(touchY!==null && e.clientY-touchY>34) agachar(true);
+});
+['pointerup','pointercancel'].forEach(ev=> cv.addEventListener(ev, ()=>{ touchY=null; agachar(false); }));
+
+window.addEventListener('keydown', e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW'){ e.preventDefault(); saltar(); }
+  if(e.code==='ArrowDown'||e.code==='KeyS'){ e.preventDefault(); agachar(true); }
+});
+window.addEventListener('keyup', e=>{
+  if(e.code==='ArrowDown'||e.code==='KeyS') agachar(false);
+});
+
+/* ================= LÓGICA ================= */
+function update(dt){
+  if(S.screen!=='play') return;
+  const g = SEGS[S.seg];
+  S.anim += dt;
+  S.t += dt;
+  S.x  = g.v*S.t;                       // ← MRU puro: x = v · t
+  if(S.inv>0) S.inv-=dt;
+  if(S.shake>0) S.shake-=dt;
+  if(S.flash>0) S.flash-=dt;
+
+  if(S.jump>=0){ S.jump+=dt; if(S.jump>=T_AIR) S.jump=-1; }
+  const jy = alturaSalto();
+
+  const medioAncho = g.hwM;
+  if(S.inv<=0){
+    for(const o of S.obs){
+      if(S.x+medioAncho > o.x && S.x-medioAncho < o.x+o.w){
+        const choca = o.alto ? !S.duck : (jy < OBST_H);
+        if(choca){
+          S.hearts--; S.hits++; S.inv=1.3; S.shake=.35; S.flash=.25; sfx.hit();
+          S.popups.push({txt:'¡CHOQUE! la v NO cambia', t:1.4, y:0});
+          if(S.hearts<=0){ setTimeout(()=>panelFallo(), 420); }
+          break;
+        }
+      }
+    }
+  }
+  const altoCh = g.chH*(S.duck? DUCK_S : 1);
+  for(const m of S.mon){
+    if(m.ok) continue;
+    if(Math.abs(m.x-S.x) < medioAncho+16/g.scale && m.y > jy-18 && m.y < jy+altoCh+18){
+      m.ok=true; S.coins++; sfx.coin();
+    }
+  }
+  const last = S.graf[S.graf.length-1];
+  const tt = S.totalT+S.t, xx = S.totalX+S.x;
+  if(!last || tt-last.t > 0.12) S.graf.push({t:tt, x:xx, seg:S.seg});
+
+  S.popups.forEach(p=>{ p.t-=dt; p.y+=dt*26; });
+  S.popups = S.popups.filter(p=>p.t>0);
+
+  if(S.x >= g.dist){ S.x=g.dist; S.t=g.dist/g.v; panelTramo(); }
+  hud();
+}
+function alturaSalto(){
+  if(S.jump<0) return 0;
+  const f = S.jump/T_AIR;
+  return 4*JUMP_H*f*(1-f);
+}
+
+function hud(){
+  const g=SEGS[S.seg];
+  document.getElementById('hV').innerHTML = fmt(g.v,1)+' <em>m/s</em>';
+  document.getElementById('hT').innerHTML = fmt(S.t,1)+' <em>s</em>';
+  document.getElementById('hX').innerHTML = fmt(S.x,0)+' <em>/'+g.dist+' m</em>';
+  document.getElementById('hC').textContent = S.coins;
+  document.getElementById('eqT').textContent = fmt(S.t,1)+' s';
+  document.getElementById('eqX').textContent = fmt(S.x,1)+' m';
+  let h=''; for(let i=0;i<3;i++) h += i<S.hearts? '❤️' : '🤍';
+  document.getElementById('hearts').textContent = h;
+}
+
+/* ================= DIBUJO ================= */
+function render(){
+  const g = SEGS[S.seg];
+  const gy = groundY();
+  const camPx = S.x*g.scale - CHAR_X;
+
+  ctx.save();
+  if(S.shake>0){ ctx.translate((Math.random()-.5)*7, (Math.random()-.5)*7); }
+
+  const sky = ctx.createLinearGradient(0,0,0,gy);
+  sky.addColorStop(0,g.sky[0]); sky.addColorStop(1,g.sky[1]);
+  ctx.fillStyle=sky; ctx.fillRect(-10,-10,LW+20,gy+10);
+
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  ctx.beginPath(); ctx.arc(LW*0.78, gy*0.22, 34, 0, 7); ctx.fill();
+
+  cerros(camPx*0.12, g.lejos, gy, 120, 260, 0.55);
+  cerros(camPx*0.30, g.medio, gy, 92, 190, 0.75);
+  vegetacion(camPx*0.55, g, gy);
+
+  ctx.fillStyle=g.tierra; ctx.fillRect(0,gy,LW,LH-gy);
+  ctx.fillStyle=g.pasto; ctx.fillRect(0,gy,LW,14);
+  ctx.fillStyle='rgba(0,0,0,.18)'; ctx.fillRect(0,gy+14,LW,3);
+
+  regla(camPx, g, gy);
+  meta(camPx, g, gy);
+  naveYSombra(gy);
+
+  for(const o of S.obs){
+    const sx = o.x*g.scale - camPx, sw = o.w*g.scale;
+    if(sx>LW+90 || sx+sw<-90) continue;
+    o.alto ? dibujarAlto(sx,sw,gy,g) : dibujarBajo(sx,sw,gy,g);
+  }
+  for(const m of S.mon){
+    if(m.ok) continue;
+    const sx = m.x*g.scale - camPx;
+    if(sx<-40||sx>LW+40) continue;
+    moneda(sx, gy-m.y-10, S.anim);
+  }
+
+  const jy = alturaSalto();
+  ctx.globalAlpha = (S.inv>0 && Math.floor(S.inv*14)%2===0)? 0.35 : 1;
+  ctx.fillStyle='rgba(0,0,0,.22)';
+  ctx.beginPath(); ctx.ellipse(CHAR_X, gy+8, g.drawW*0.55-jy*0.08, 6-jy*0.02, 0,0,7); ctx.fill();
+  dibujarYaruma(CHAR_X, gy-jy, g.key, S.anim, S.duck, jy>0, g.k);
+  ctx.globalAlpha=1;
+
+  telemetria(g);
+
+  ctx.textAlign='center'; ctx.font='700 17px "Space Mono", monospace';
+  S.popups.forEach(p=>{
+    ctx.globalAlpha=Math.min(1,p.t);
+    ctx.fillStyle='#0B2A24'; ctx.fillText(p.txt, CHAR_X+2, gy-160-p.y+2);
+    ctx.fillStyle='#FFC93C'; ctx.fillText(p.txt, CHAR_X, gy-160-p.y);
+  });
+  ctx.globalAlpha=1;
+
+  if(S.flash>0){ ctx.fillStyle='rgba(226,103,60,'+(S.flash*1.2)+')'; ctx.fillRect(0,0,LW,LH); }
+  ctx.restore();
+}
+
+function naveYSombra(gy){
+  const off=[620,565,510,450,385,320][S.seg];
+  const sx=CHAR_X+off;
+  if(sx>LW+180) return;
+  const bob=Math.sin(S.anim*0.9)*5;
+  const ny=gy-LH*0.52+bob, R=46;
+  ctx.fillStyle='rgba(4,17,15,.30)';
+  ctx.beginPath(); ctx.ellipse(sx,gy+9,R*1.5,R*0.30,0,0,7); ctx.fill();
+  ctx.fillStyle='rgba(179,136,255,.10)';
+  ctx.beginPath(); ctx.ellipse(sx,ny,R*2.1,R*0.85,0,0,7); ctx.fill();
+  ctx.fillStyle='#14232B'; ctx.beginPath(); ctx.ellipse(sx,ny,R,R*0.29,0,0,7); ctx.fill();
+  ctx.fillStyle='#1B2E38'; ctx.beginPath(); ctx.ellipse(sx,ny-R*0.15,R*0.5,R*0.24,0,0,7); ctx.fill();
+  for(let i=0;i<8;i++){ const a=S.anim*1.1+i*Math.PI/4;
+    ctx.globalAlpha=.35+.55*Math.max(0,Math.sin(a));
+    ctx.fillStyle=i%2?'#B388FF':'#7CF29C';
+    ctx.beginPath(); ctx.arc(sx+Math.cos(a)*R*0.85, ny+Math.sin(a)*R*0.25, 2.6,0,7); ctx.fill(); }
+  ctx.globalAlpha=1;
+  ctx.font='700 10px "Space Mono", monospace'; ctx.textAlign='center';
+  ctx.fillStyle='rgba(242,246,239,.55)'; ctx.fillText('LA NAVE',sx,ny+R*0.75);
+  ctx.fillStyle='rgba(4,17,15,.5)'; ctx.fillText('su sombra',sx,gy+30);
+  ctx.textAlign='left';
+}
+
+function cerros(off,color,gy,amp,step,op){
+  ctx.fillStyle=color; ctx.globalAlpha=op;
+  const k0=Math.floor(off/step)-1, k1=Math.floor((off+LW)/step)+1;
+  for(let k=k0;k<=k1;k++){
+    const sx=k*step-off, h=amp*(0.5+0.5*rnd(k*3.7));
+    ctx.beginPath();
+    ctx.moveTo(sx-step*0.75, gy);
+    ctx.lineTo(sx, gy-h);
+    ctx.lineTo(sx+step*0.75, gy);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+
+function vegetacion(off,g,gy){
+  const step=150;
+  const k0=Math.floor(off/step)-1, k1=Math.floor((off+LW)/step)+1;
+  for(let k=k0;k<=k1;k++){
+    const sx=k*step-off + rnd(k*5.3)*70;
+    const h=54+rnd(k*9.1)*46;
+    ctx.fillStyle='#1E5C40';
+    ctx.fillRect(sx-4, gy-h, 8, h);
+    ctx.fillStyle=g.medio;
+    for(let j=0;j<5;j++){
+      const a=-Math.PI/2 + (j-2)*0.55;
+      ctx.beginPath();
+      ctx.moveTo(sx, gy-h);
+      ctx.quadraticCurveTo(sx+Math.cos(a)*44, gy-h+Math.sin(a)*30, sx+Math.cos(a)*66, gy-h+Math.sin(a)*8+18);
+      ctx.quadraticCurveTo(sx+Math.cos(a)*40, gy-h+Math.sin(a)*16, sx, gy-h+5);
+      ctx.fill();
+    }
+  }
+}
+
+function regla(camPx,g,gy){
+  const paso = pasoRegla(g.scale);
+  const sub = paso/5;
+  const x0 = Math.floor((camPx/g.scale)/sub)*sub;
+  ctx.textAlign='center';
+  for(let m=x0; m*g.scale-camPx < LW+60; m+=sub){
+    if(m<0) continue;
+    const sx = m*g.scale - camPx;
+    const mayor = Math.abs(m/paso - Math.round(m/paso)) < 1e-6;
+    ctx.fillStyle = mayor? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.32)';
+    ctx.fillRect(sx-1, gy+16, mayor?3:2, mayor?16:8);
+    if(mayor){
+      ctx.font='700 12px "Space Mono", monospace';
+      ctx.fillStyle='rgba(255,255,255,.9)';
+      ctx.fillText(Math.round(m)+' m', sx, gy+48);
+    }
+  }
+  ctx.textAlign='left'; ctx.font='10px "Space Mono", monospace';
+  ctx.fillStyle='rgba(255,255,255,.6)';
+  ctx.fillText('cámara: 1 m = '+fmt(g.scale,0)+' px', 12, LH-10);
+}
+
+function meta(camPx,g,gy){
+  const sx = g.dist*g.scale - camPx;
+  if(sx>LW+60||sx<-60) return;
+  ctx.fillStyle='#F2F6EF'; ctx.fillRect(sx-3, gy-150, 6, 150);
+  for(let r=0;r<7;r++) for(let c=0;c<3;c++){
+    ctx.fillStyle = ((r+c)%2)? '#0B2A24' : '#F2F6EF';
+    ctx.fillRect(sx+3+c*16, gy-150+r*15, 16, 15);
+  }
+}
+
+function dibujarBajo(sx,sw,gy,g){
+  const h=OBST_H;
+  if(g.key==='walk'||g.key==='run'){
+    // Troncos y piedras ceremoniales
+    ctx.fillStyle='#5A3A20';
+    ctx.beginPath(); ctx.roundRect(sx, gy-h, sw, h, 7); ctx.fill();
+    ctx.fillStyle='#855328'; ctx.fillRect(sx+3, gy-h+4, sw-6, 6);
+    // Enredaderas y hojas
+    ctx.fillStyle='#3FAE5A';
+    ctx.beginPath(); ctx.arc(sx+sw*0.3, gy-h+2, 4, 0, 7); ctx.arc(sx+sw*0.7, gy-h+3, 5, 0, 7); ctx.fill();
+  } else if(g.key==='skate'){
+    // Petroglifo / Monolito ancestral
+    ctx.fillStyle='#4A5568';
+    ctx.beginPath(); ctx.moveTo(sx,gy); ctx.lineTo(sx+sw*0.2,gy-h); ctx.lineTo(sx+sw*0.8,gy-h); ctx.lineTo(sx+sw,gy); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#FFC93C'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(sx+sw/2, gy-h/2, 6, 0, Math.PI*1.5); ctx.stroke(); // Espiral petroglifo
+  } else if(g.key==='bike'){
+    // Vasija de barro sagrada
+    ctx.fillStyle='#9C4221';
+    ctx.beginPath(); ctx.ellipse(sx+sw/2, gy-h/2, sw/2.2, h*0.5, 0,0,7); ctx.fill();
+    ctx.fillStyle='#D97706'; ctx.fillRect(sx+sw*0.2, gy-h+4, sw*0.6, 5);
+    ctx.fillStyle='#FBBF24'; ctx.fillRect(sx+sw*0.25, gy-h/2-2, sw*0.5, 4);
+  } else if(g.key==='moto'){
+    // Tambor ceremonial de madera y cuero
+    ctx.fillStyle='#78350F';
+    ctx.beginPath(); ctx.roundRect(sx, gy-h, sw, h, 6); ctx.fill();
+    ctx.fillStyle='#FEF3C7'; ctx.fillRect(sx+2, gy-h+2, sw-4, 6);
+    ctx.strokeStyle='#D97706'; ctx.lineWidth=1.5;
+    for(let i=4; i<sw-4; i+=8){ ctx.beginPath(); ctx.moveTo(sx+i, gy-h+8); ctx.lineTo(sx+i+4, gy-2); ctx.stroke(); }
+  } else {
+    // Estela de oro y cuarzo
+    ctx.fillStyle='#D97706';
+    ctx.beginPath(); ctx.roundRect(sx, gy-h, sw, h, 6); ctx.fill();
+    ctx.fillStyle='#FDE047'; ctx.fillRect(sx+sw*0.2, gy-h*0.8, sw*0.6, h*0.6);
+    ctx.fillStyle='#047857'; ctx.beginPath(); ctx.arc(sx+sw/2, gy-h/2, 4, 0, 7); ctx.fill(); // Esmeralda central
+  }
+}
+
+function dibujarAlto(sx,sw,gy,g){
+  const top = gy-g.gap;
+  if(g.key==='run'){
+    // Liana / bejuco con hojas y flores
+    ctx.fillStyle='#2D5A27';
+    ctx.beginPath(); ctx.roundRect(sx, top-18, sw, 18, 5); ctx.fill();
+    ctx.fillStyle='#EF4444'; ctx.beginPath(); ctx.arc(sx+sw*0.3, top-8, 4, 0, 7); ctx.arc(sx+sw*0.7, top-10, 4, 0, 7); ctx.fill();
+  } else {
+    // Arco / Portal ceremonial de caña y oro
+    ctx.fillStyle='#854D0E';
+    ctx.beginPath(); ctx.roundRect(sx, top-24, sw, 24, 5); ctx.fill();
+    ctx.fillStyle='#F59E0B';
+    for(let i=2; i<sw-6; i+=16){ ctx.fillRect(sx+i, top-16, 8, 8); }
+  }
+  ctx.strokeStyle='#78350F'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(sx+sw*0.5, top-24); ctx.lineTo(sx+sw*0.5, top-48); ctx.stroke();
+}
+
+function moneda(x,y,t){
+  const w = 12*Math.abs(Math.cos(t*3.4 + x*0.01)) + 5;
+  // Disco solar / Medallón precolombino
+  ctx.fillStyle='#B45309';
+  ctx.beginPath(); ctx.ellipse(x, y+2, w, 13, 0,0,7); ctx.fill();
+  ctx.fillStyle='#F59E0B';
+  ctx.beginPath(); ctx.ellipse(x, y, w, 13, 0,0,7); ctx.fill();
+  ctx.fillStyle='#FEF08A';
+  ctx.beginPath(); ctx.ellipse(x, y, w*0.7, 9, 0,0,7); ctx.fill();
+  if(w>9){
+    ctx.fillStyle='#78350F'; ctx.font='700 12px "Space Mono", monospace'; ctx.textAlign='center';
+    ctx.fillText('☀', x, y+4);
+  }
+}
+
+function dibujarYaruma(x, y, modo, t, duck, air, k){
+  // Paleta auténtica indígena
+  const P = {
+    piel: '#C27833',       // Tono cobrizo andino
+    ropa: '#0D6857',       // Verde esmeralda ancestral
+    faja: '#DC2626',       // Faja roja tejida
+    oro: '#F59E0B',        // Oro precolombino
+    oroBrillante: '#FDE047',
+    pelo: '#0B1320',       // Negro azabache
+    pluma1: '#10B981',     // Pluma verde quetzal / esmeralda
+    pluma2: '#EF4444',     // Pluma carmesí guacamaya
+    madera: '#854D0E'
+  };
+
+  ctx.save(); ctx.translate(x,y);
+  ctx.scale(k, k*(duck? DUCK_S : 1));
+
+  function cuerpo(lean, piernaFase, brazo){
+    ctx.save(); ctx.rotate(lean);
+
+    // Piernas con pantorrilleras
+    ctx.strokeStyle=P.piel; ctx.lineWidth=6.5; ctx.lineCap='round';
+    const a = air? 0.5 : Math.sin(piernaFase)*0.75;
+    ctx.beginPath(); ctx.moveTo(0,-30); ctx.lineTo(Math.sin(a)*13, -2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-30); ctx.lineTo(-Math.sin(a)*13, -2); ctx.stroke();
+
+    // Tobilleras doradas
+    ctx.strokeStyle=P.oro; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(Math.sin(a)*13-3, -4); ctx.lineTo(Math.sin(a)*13+3, -4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-Math.sin(a)*13-3, -4); ctx.lineTo(-Math.sin(a)*13+3, -4); ctx.stroke();
+
+    // Túnica / Taparrabo ceremonial
+    ctx.fillStyle=P.ropa;
+    ctx.beginPath(); ctx.roundRect(-11,-58,22,32,7); ctx.fill();
+
+    // Franja decorativa tejida precolombina
+    ctx.fillStyle=P.faja; ctx.fillRect(-11,-44,22,5);
+    ctx.fillStyle=P.oro; ctx.fillRect(-11,-39,22,3);
+
+    // Pectoral de oro precolombino
+    ctx.fillStyle=P.oroBrillante;
+    ctx.beginPath(); ctx.arc(1,-50,5,0,Math.PI); ctx.fill();
+
+    // Brazo con brazalete de oro
+    ctx.strokeStyle=P.piel; ctx.lineWidth=5.5;
+    ctx.beginPath(); ctx.moveTo(2,-52); ctx.lineTo(brazo.x, brazo.y); ctx.stroke();
+    ctx.strokeStyle=P.oro; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc((2+brazo.x)/2, (-52+brazo.y)/2, 3, 0, 7); ctx.stroke();
+
+    // Cabeza y rostro cobrizo
+    ctx.fillStyle=P.piel; ctx.beginPath(); ctx.arc(1,-68,12,0,7); ctx.fill();
+
+    // Pintura facial ceremonial (dos líneas rojas en mejilla)
+    ctx.strokeStyle=P.faja; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(5,-67); ctx.lineTo(9,-67); ctx.moveTo(5,-64); ctx.lineTo(9,-64); ctx.stroke();
+
+    // Cabello largo azabache
+    ctx.fillStyle=P.pelo;
+    ctx.beginPath(); ctx.arc(1,-71,12.5,Math.PI*0.9,Math.PI*2.1); ctx.fill();
+    // Trenza cayendo por la espalda
+    ctx.beginPath(); ctx.moveTo(-9,-68); ctx.quadraticCurveTo(-14,-56,-11,-42); ctx.lineTo(-7,-42); ctx.quadraticCurveTo(-10,-56,-5,-68); ctx.closePath(); ctx.fill();
+
+    // Vincha / Cinta ceremonial tejida
+    ctx.fillStyle=P.faja; ctx.fillRect(-11,-74,23,4);
+    ctx.fillStyle=P.oro; ctx.fillRect(-11,-72,23,2);
+
+    // Plumas ceremoniales en la cabeza (verde y roja)
+    ctx.save(); ctx.translate(-6,-74); ctx.rotate(-0.35);
+    ctx.fillStyle=P.pluma1; ctx.beginPath(); ctx.ellipse(0,-10,3.5,10,0,0,7); ctx.fill();
+    ctx.fillStyle=P.pluma2; ctx.beginPath(); ctx.ellipse(4,-8,2.8,8,0.2,0,7); ctx.fill();
+    ctx.restore();
+
+    // Ojo y expresión
+    ctx.fillStyle='#0B1320'; ctx.beginPath(); ctx.arc(8,-67,2,0,7); ctx.fill();
+
+    ctx.restore();
+  }
+
+  if(modo==='walk'){ cuerpo(0, t*5.5, {x:12,y:-36}); }
+  else if(modo==='run'){ cuerpo(-0.22, t*13, {x:16,y:-58}); }
+  else if(modo==='skate'){
+    // TABLA ANCESTRAL DE GUAYACÁN
+    ruedaMadera(-15,-5,6); ruedaMadera(15,-5,6);
+    // Tabla de madera noble pulida con bordes curvados
+    ctx.fillStyle='#854D0E';
+    ctx.beginPath(); ctx.roundRect(-26,-15,52,8,4); ctx.fill();
+    ctx.fillStyle='#F59E0B'; ctx.fillRect(-20,-13,40,3); // Grabado solar
+    ctx.translate(0,-12); cuerpo(-0.12, 0, {x:18,y:-52});
+  }
+  else if(modo==='bike'){
+    // BICI DE GUADUA Y TUMBAGA
+    ruedaMadera(-20,-16,16); ruedaMadera(20,-16,16);
+    // Cuadro de caña de guadua dorada
+    ctx.strokeStyle='#CA8A04'; ctx.lineWidth=4.5;
+    ctx.beginPath(); ctx.moveTo(-20,-16); ctx.lineTo(0,-18); ctx.lineTo(20,-16);
+    ctx.moveTo(0,-18); ctx.lineTo(5,-42); ctx.lineTo(20,-16); ctx.stroke();
+    // Timón de madera con cintas
+    ctx.strokeStyle='#78350F'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(2,-45); ctx.lineTo(9,-45); ctx.stroke();
+    ctx.fillStyle='#EF4444'; ctx.fillRect(9,-47,5,2); // Cinta roja
+    ctx.translate(-2,-40); ctx.scale(.9,.9); cuerpo(-0.32, 0, {x:20,y:-40});
+  }
+  else if(modo==='moto'){
+    // BÓLIDO CEREMONIAL DEL QUITASOL (Madera noble, mascarón de jaguar y bronce)
+    ruedaMadera(-26,-17,17); ruedaMadera(26,-17,17);
+    ctx.fillStyle='#78350F';
+    ctx.beginPath(); ctx.moveTo(-32,-24); ctx.lineTo(12,-32); ctx.lineTo(34,-26); ctx.lineTo(28,-14); ctx.lineTo(-26,-14); ctx.closePath(); ctx.fill();
+    // Mascarón tallado frontal
+    ctx.fillStyle='#F59E0B';
+    ctx.beginPath(); ctx.ellipse(32,-26,7,6,0,0,7); ctx.fill();
+    ctx.fillStyle='#EF4444'; ctx.fillRect(28,-28,4,4); // Ojo del jaguar
+    // Asiento de piel y detalles dorados
+    ctx.fillStyle='#9A3412'; ctx.beginPath(); ctx.roundRect(-16,-38,26,10,4); ctx.fill();
+    ctx.translate(-4,-38); ctx.scale(.88,.88); cuerpo(-0.38, 0, {x:26,y:-38});
+  }
+  else {
+    // CARROZA SOLAR DE ORO DE NIQUÍA (Bólido ceremonial precolombino)
+    ruedaOro(-32,-14,14,t); ruedaOro(32,-14,14,t);
+    // Carrocería de oro y tumbaga aerodinámica
+    const gOro = ctx.createLinearGradient(-48,-44,48,-12);
+    gOro.addColorStop(0,'#FDE047'); gOro.addColorStop(0.5,'#F59E0B'); gOro.addColorStop(1,'#B45309');
+    ctx.fillStyle=gOro;
+    ctx.beginPath();
+    ctx.moveTo(-48,-12); ctx.lineTo(-42,-28); ctx.lineTo(-8,-32);
+    ctx.lineTo(8,-46); ctx.lineTo(28,-46); ctx.lineTo(38,-28);
+    ctx.lineTo(52,-24); ctx.lineTo(52,-12); ctx.closePath(); ctx.fill();
+
+    // Alas de cóndor grabadas en relieve
+    ctx.strokeStyle='#FEF08A'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(-30,-22); ctx.quadraticCurveTo(0,-30,30,-22); ctx.stroke();
+
+    // Cabina ceremonial y mascarón solar
+    ctx.fillStyle='#064E3B'; ctx.beginPath(); ctx.moveTo(10,-44); ctx.lineTo(26,-44); ctx.lineTo(32,-32); ctx.lineTo(12,-32); ctx.closePath(); ctx.fill();
+    // Emblema del Sol de los Niquías en la proa
+    ctx.fillStyle='#FEF08A'; ctx.beginPath(); ctx.arc(46,-24,6,0,7); ctx.fill();
+    // Cabeza de Yaruma al volante
+    ctx.fillStyle=P.piel; ctx.beginPath(); ctx.arc(20,-40,7,0,7); ctx.fill();
+    ctx.fillStyle=P.oro; ctx.fillRect(14,-44,12,3); // Vincha dorada
+    ctx.fillStyle=P.pluma2; ctx.fillRect(12,-48,3,5); // Pluma al viento
+  }
+  ctx.restore();
+}
+
+function ruedaMadera(x,y,r){
+  // Rueda de piedra de río / madera noble con aro de oro
+  ctx.fillStyle='#78350F'; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+  ctx.fillStyle='#B45309'; ctx.beginPath(); ctx.arc(x,y,r*0.7,0,7); ctx.fill();
+  ctx.fillStyle='#F59E0B'; ctx.beginPath(); ctx.arc(x,y,r*0.35,0,7); ctx.fill();
+  ctx.strokeStyle='#FDE047'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.stroke();
+}
+
+function ruedaOro(x,y,r,t){
+  // Rueda solar de oro precolombino con rayos
+  ctx.fillStyle='#9A3412'; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+  ctx.fillStyle='#F59E0B'; ctx.beginPath(); ctx.arc(x,y,r*0.8,0,7); ctx.fill();
+  ctx.fillStyle='#FEF08A'; ctx.beginPath(); ctx.arc(x,y,r*0.35,0,7); ctx.fill();
+  ctx.strokeStyle='#FDE047'; ctx.lineWidth=2;
+  for(let i=0;i<6;i++){
+    const a = t*9 + i*Math.PI/3;
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+Math.cos(a)*r*0.85, y+Math.sin(a)*r*0.85); ctx.stroke();
+  }
+}
+
+function telemetria(g){
+  const W=176,H=96,px=LW-W-14,py=14;
+  ctx.fillStyle='rgba(6,26,23,.82)';
+  ctx.beginPath(); ctx.roundRect(px,py,W,H,10); ctx.fill();
+  ctx.strokeStyle='rgba(124,242,156,.35)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle='#9FBAB0'; ctx.font='9px "Space Mono", monospace'; ctx.textAlign='left';
+  ctx.fillText('x (m)', px+8, py+15);
+  ctx.fillText('t (s)', px+W-30, py+H-8);
+  const T=g.dist/g.v, x0=px+22, y0=py+H-18, w=W-34, h=H-32;
+  ctx.strokeStyle='rgba(159,186,176,.5)';
+  ctx.beginPath(); ctx.moveTo(x0,py+12); ctx.lineTo(x0,y0); ctx.lineTo(px+W-8,y0); ctx.stroke();
+  ctx.strokeStyle='#7CF29C'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(x0,y0);
+  ctx.lineTo(x0 + w*(S.t/T), y0 - h*(S.x/g.dist)); ctx.stroke();
+  ctx.fillStyle='#FFC93C';
+  ctx.beginPath(); ctx.arc(x0 + w*(S.t/T), y0 - h*(S.x/g.dist), 3.5, 0, 7); ctx.fill();
+}
+
+/* ================= BUCLE ================= */
+let prev=performance.now();
+function loop(now){
+  let dt=(now-prev)/1000; prev=now;
+  if(dt>0.05) dt=0.05;
+  update(dt);
+  if(S.screen==='play') render();
+  requestAnimationFrame(loop);
+}
+
+/* ================= PANELES ================= */
+const scMenu=document.getElementById('scMenu'), scPanel=document.getElementById('scPanel'), scEnd=document.getElementById('scEnd');
+function hideAll(){ scMenu.hidden=true; scPanel.hidden=true; scEnd.hidden=true; }
+
+function panelFallo(){
+  S.screen='panel';
+  const g=SEGS[S.seg];
+  document.getElementById('panelCard').innerHTML =
+    '<div class="eyebrow">TRAMO '+g.n+' · '+g.name.toUpperCase()+'</div>'+
+    '<h2>Se acabaron los corazones</h2>'+
+    '<p>Yaruma chocó tres veces en el tramo de <b>'+g.obs+'</b>. Recuerda: el salto dura siempre 0,85 s, así que a mayor velocidad debes saltar <b>desde más lejos</b>.</p>'+
+    '<div class="formula">distancia del salto = v · 0,85 s<small>A '+fmt(g.v,1)+' M/S ESO SON '+fmt(g.v*T_AIR,1)+' METROS EN EL AIRE</small></div>'+
+    '<button class="cta" id="pRetry">REINTENTAR EL TRAMO</button>'+
+    '<button class="ghost" id="pMenu">Volver al menú</button>';
+  scPanel.hidden=false;
+  document.getElementById('pRetry').onclick=()=>iniciarTramo(S.seg);
+  document.getElementById('pMenu').onclick=abrirMenu;
+}
+
+function panelTramo(){
+  S.screen='panel'; sfx.win();
+  const g=SEGS[S.seg], tSeg=g.dist/g.v;
+  S.done[S.seg]={coins:S.coins, hits:S.hits, t:tSeg};
+  const c=document.getElementById('panelCard');
+  c.innerHTML =
+    '<div class="eyebrow">ESTACIÓN DE DATOS · TRAMO '+g.n+'</div>'+
+    '<h2>'+g.name+' · '+g.bioma+'</h2>'+
+    '<table class="datos">'+
+      '<tr><td>VELOCIDAD (constante)</td><td class="hi">'+fmt(g.v,1)+' m/s</td></tr>'+
+      '<tr><td>DISTANCIA RECORRIDA Δx</td><td>'+g.dist+' m</td></tr>'+
+      '<tr><td>TIEMPO EMPLEADO Δt</td><td>'+fmt(tSeg,1)+' s</td></tr>'+
+      '<tr><td>MONEDAS</td><td class="hi2">'+S.coins+'</td></tr>'+
+      '<tr><td>CHOQUES</td><td>'+S.hits+'</td></tr>'+
+    '</table>'+
+    '<div class="formula">v = Δx / Δt = '+g.dist+' m / '+fmt(tSeg,1)+' s = '+fmt(g.v,1)+' m/s'+
+      '<small>LA RECTA DE x vs t TIENE PENDIENTE '+fmt(g.v,1)+'</small></div>'+
+    '<div class="q"><div class="num">PREGUNTA TIPO SABER 11</div><p>'+g.q.t+'</p><div id="opts"></div><div id="fb"></div></div>'+
+    '<button class="cta" id="pNext" style="display:none">'+(S.seg<SEGS.length-1?'SIGUIENTE TRAMO':'VER RESULTADOS DEL MUNDO 1')+'</button>';
+  const box=document.getElementById('opts');
+  const letras=['A','B','C','D'];
+  g.q.o.forEach((op,i)=>{
+    const b=document.createElement('button');
+    b.className='opt'; b.innerHTML='<b>'+letras[i]+'</b>'+op;
+    b.onclick=()=>{
+      if(box.dataset.hecho) return;
+      box.dataset.hecho='1';
+      [...box.children].forEach((el,j)=>{ if(j===g.q.c) el.classList.add('ok'); else if(j===i) el.classList.add('no'); });
+      const fb=document.getElementById('fb');
+      fb.className = i===g.q.c? 'fb':'fb bad';
+      fb.innerHTML = (i===g.q.c? '<b>Correcto.</b> ':'<b>La respuesta era '+letras[g.q.c]+'.</b> ')+g.q.e;
+      document.getElementById('pNext').style.display='block';
+      beep(i===g.q.c?880:220,.18,'triangle',.05);
+    };
+    box.appendChild(b);
+  });
+  document.getElementById('pNext').onclick=()=>{
+    S.totalT+=tSeg; S.totalX+=g.dist;
+    if(S.seg<SEGS.length-1) iniciarTramo(S.seg+1); else pantallaFinal();
+  };
+  scPanel.hidden=false;
+  scPanel.scrollTop=0;
+}
+
+function pantallaFinal(){
+  S.screen='end';
+  const TXm=SEGS.reduce((a,g)=>a+g.dist,0), TTm=SEGS.reduce((a,g)=>a+g.dist/g.v,0);
+  S.totalX=TXm; S.totalT=TTm;
+  const vm = TXm/TTm;
+  const prom = SEGS.reduce((a,g)=>a+g.v,0)/SEGS.length;
+  const monedas = S.done.reduce((a,d)=>a+(d?d.coins:0),0);
+  const choques = S.done.reduce((a,d)=>a+(d?d.hits:0),0);
+  document.getElementById('endCard').innerHTML =
+    '<div class="eyebrow">MUNDO 1 COMPLETADO</div>'+
+    '<h1>La pista <span class="acc">completa</span></h1>'+
+    '<p class="lead">Seis tramos, seis velocidades constantes. Juntos ya no son un MRU: son seis MRU pegados uno detrás de otro.</p>'+
+    '<button class="ghost" id="bMarcar" style="margin:6px 0 2px;border-color:#FFC93C;color:#FFC93C">'+
+      (S.marcar?'◉ OCULTAR PENDIENTE Y ÁREA':'◎ MOSTRAR QUÉ SIGNIFICA CADA GRÁFICA')+'</button>'+
+    '<canvas class="graf" id="gXT" width="560" height="310"></canvas>'+
+    '<div class="leg"><span><i style="background:#7CF29C"></i>posición x vs tiempo t</span></div>'+
+    '<canvas class="graf" id="gVT" width="560" height="260"></canvas>'+
+    '<div class="leg"><span><i style="background:#FFC93C"></i>velocidad v vs tiempo t</span></div>'+
+    '<table class="datos">'+
+      '<tr><td>DISTANCIA TOTAL</td><td>'+S.totalX+' m</td></tr>'+
+      '<tr><td>TIEMPO TOTAL</td><td>'+fmt(S.totalT,1)+' s</td></tr>'+
+      '<tr><td>VELOCIDAD MEDIA (Δx/Δt)</td><td class="hi">'+fmt(vm,2)+' m/s</td></tr>'+
+      '<tr><td>PROMEDIO DE LAS 6 VELOCIDADES</td><td class="hi2">'+fmt(prom,2)+' m/s</td></tr>'+
+      '<tr><td>MONEDAS</td><td>'+monedas+'</td></tr>'+
+      '<tr><td>CHOQUES</td><td>'+choques+'</td></tr>'+
+    '</table>'+
+    '<p class="note"><b>Ojo con esto:</b> los dos números de arriba no son iguales. La velocidad media es '+fmt(vm,2)+' m/s, no '+fmt(prom,2)+' m/s. La velocidad media se calcula con la distancia total sobre el tiempo total, nunca promediando velocidades, porque Yaruma no gastó el mismo tiempo en cada tramo.</p>'+
+    '<div class="escena-wrap" style="margin:18px 0;background:#04110F;border:1px solid rgba(124,242,156,.3);border-radius:16px;overflow:hidden">'+
+      '<div style="display:flex;align-items:center;padding:8px 12px;background:#08211D;border-bottom:1px solid rgba(124,242,156,.2);gap:10px">'+
+        '<span style="font-family:var(--dato);font-size:10px;color:var(--oro);letter-spacing:.2em;flex:1">ESCENA DE SALIDA · MRU</span>'+
+        '<button id="bVozExit" class="chip" style="background:rgba(255,201,60,.18);border:1px solid rgba(255,201,60,.5);color:var(--oro);padding:4px 8px;border-radius:6px;font-family:var(--dato);font-size:10px;cursor:pointer">🔊 VOZ</button>'+
+        '<button id="bReplayExit" class="chip" style="background:rgba(124,242,156,.15);border:1px solid rgba(124,242,156,.3);color:var(--hueso);padding:4px 8px;border-radius:6px;font-family:var(--dato);font-size:10px;cursor:pointer">↻ REPETIR</button>'+
+      '</div>'+
+      '<canvas id="cineExit" width="560" height="240" style="display:block;width:100%;height:auto;background:#04110F"></canvas>'+
+      '<div style="padding:12px 14px;background:rgba(6,26,23,.9)">'+
+        '<div id="quienExit" style="font-family:var(--dato);font-size:10px;color:var(--oro);letter-spacing:.18em;margin-bottom:4px">LA ANCIANA</div>'+
+        '<p id="lineaExit" style="font-size:14px;line-height:1.55;color:var(--hueso);margin:0">El rastro no cambia de ritmo. Mira las marcas en el suelo: cada segundo recorre exactamente la misma distancia.</p>'+
+      '</div>'+
+    '</div>'+
+    '<button class="cta" id="eNext" style="background:#FFC93C;box-shadow:0 4px 0 #C1901F">CONTINUAR AL MUNDO 2 &#9656;</button>'+
+    '<button class="ghost" id="eAgain">Jugar otra vez el mundo 1</button>'+
+    '<button class="ghost" id="eMenu">Elegir un tramo</button>';
+  scEnd.hidden=false; scEnd.scrollTop=0;
+  dibujarGraficas();
+  iniciarEscenaSalidaMRU();
+  document.getElementById('bMarcar').onclick=()=>{ S.marcar=!S.marcar; pantallaFinal(); };
+  document.getElementById('eNext').onclick=()=>{ if(window.FA) window.FA.ir(1); };
+  document.getElementById('eAgain').onclick=()=>{ S.totalT=0; S.totalX=0; S.graf=[]; S.done=[]; iniciarTramo(0); };
+  document.getElementById('eMenu').onclick=abrirMenu;
+}
+
+function iniciarEscenaSalidaMRU(){
+  const cv = document.getElementById('cineExit'); if(!cv) return;
+  const ctx = cv.getContext('2d');
+  let tExit = 0, lineaIdx = -1, vozOn = true;
+  const GUION_EXIT = [
+    { t: 0.2, q: 'LA ANCIANA', l: 'El rastro no cambia de ritmo. Mira las marcas en el suelo: cada segundo recorre exactamente la misma distancia.' },
+    { t: 7.0, q: 'YARUMA', l: '¿Si mantiene la misma rapidez, puedo predecir exactamente dónde estará en diez segundos?' },
+    { t: 13.5, q: 'LA ANCIANA', l: 'Así es. Cuando la velocidad no cambia, el tiempo es tu mejor aliado: la distancia es el producto de velocidad por tiempo.' }
+  ];
+
+  function hablarExit(txt){
+    if(!vozOn || !window.speechSynthesis) return;
+    try{
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(txt);
+      u.lang = 'es-CO'; u.rate = 0.95; u.pitch = 0.75;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  const bVoz = document.getElementById('bVozExit');
+  if(bVoz) bVoz.onclick = () => {
+    vozOn = !vozOn;
+    bVoz.textContent = vozOn ? '🔊 VOZ' : '🔇 VOZ';
+    if(!vozOn) try{ window.speechSynthesis.cancel(); }catch(e){}
+    else if(lineaIdx >= 0) hablarExit(GUION_EXIT[lineaIdx].l);
+  };
+
+  const bRep = document.getElementById('bReplayExit');
+  if(bRep) bRep.onclick = () => { tExit = 0; lineaIdx = -1; };
+
+  let pTime = performance.now();
+  function animExit(now){
+    if(!document.getElementById('cineExit')) return;
+    const dt = Math.min(0.05, (now - pTime) / 1000); pTime = now;
+    tExit += dt;
+
+    for(let i = GUION_EXIT.length - 1; i >= 0; i--){
+      if(tExit >= GUION_EXIT[i].t && lineaIdx < i){
+        lineaIdx = i;
+        const qEl = document.getElementById('quienExit'), lEl = document.getElementById('lineaExit');
+        if(qEl) qEl.textContent = GUION_EXIT[i].q;
+        if(lEl) lEl.textContent = GUION_EXIT[i].l;
+        hablarExit(GUION_EXIT[i].l);
+        break;
+      }
+    }
+
+    /* PINTAR ANIMACIÓN CANVA DE ACCIÓN DE MRU */
+    const W = 560, H = 240, suelo = H * 0.78;
+    ctx.fillStyle = '#04110F'; ctx.fillRect(0, 0, W, H);
+
+    // Fondo montañas Bello
+    ctx.fillStyle = '#08211D';
+    for(let k = 0; k < 5; k++){
+      const sx = k * 140 - 20;
+      ctx.beginPath(); ctx.moveTo(sx - 90, suelo); ctx.lineTo(sx, suelo - 50); ctx.lineTo(sx + 90, suelo); ctx.fill();
+    }
+    // Camino
+    ctx.fillStyle = '#0E332C'; ctx.fillRect(0, suelo, W, H - suelo);
+    ctx.fillStyle = '#7CF29C'; ctx.fillRect(0, suelo - 2, W, 3);
+
+    // Marcas de distancia constante en el suelo (MRU)
+    for(let i = 0; i < 7; i++){
+      const mx = 60 + i * 70;
+      ctx.fillStyle = '#7CF29C';
+      ctx.fillRect(mx - 2, suelo - 10, 4, 10);
+      ctx.font = '9px "Space Mono", monospace'; ctx.fillStyle = '#9FBAB0'; ctx.textAlign = 'center';
+      ctx.fillText((i * 10) + 'm', mx, suelo + 14);
+    }
+
+    // Nave moviéndose a velocidad constante
+    const vConst = 45; // px/s
+    const shipX = (tExit * vConst) % (W + 100) - 50;
+    const shipY = H * 0.28;
+
+    // Sombra en el suelo
+    ctx.fillStyle = 'rgba(124,242,156,0.15)';
+    ctx.beginPath(); ctx.ellipse(shipX, suelo + 4, 30, 6, 0, 0, 7); ctx.fill();
+
+    // Haz rastro luminoso constante
+    ctx.strokeStyle = 'rgba(124,242,156,0.3)'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(0, shipY + 12); ctx.lineTo(shipX, shipY + 12); ctx.stroke(); ctx.setLineDash([]);
+
+    // Nave
+    ctx.fillStyle = '#14232B'; ctx.beginPath(); ctx.ellipse(shipX, shipY, 28, 9, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#7CF29C'; ctx.beginPath(); ctx.ellipse(shipX, shipY - 3, 14, 5, 0, 0, 7); ctx.fill();
+
+    // Yaruma y Anciana en el camino observando
+    // Yaruma
+    ctx.fillStyle = '#7CF29C'; ctx.beginPath(); ctx.roundRect(80, suelo - 22, 12, 16, 4); ctx.fill();
+    ctx.fillStyle = '#F2F6EF'; ctx.beginPath(); ctx.arc(86, suelo - 27, 5, 0, 7); ctx.fill();
+    // Tablet de Yaruma con fórmula x = v*t
+    ctx.fillStyle = '#FFC93C'; ctx.fillRect(92, suelo - 20, 8, 10);
+
+    // Anciana
+    ctx.fillStyle = '#B388FF'; ctx.beginPath(); ctx.roundRect(50, suelo - 20, 11, 14, 4); ctx.fill();
+    ctx.fillStyle = '#F2F6EF'; ctx.beginPath(); ctx.arc(55, suelo - 25, 4.5, 0, 7); ctx.fill();
+
+    // Fórmula proyectada en el cielo
+    ctx.font = '700 13px "Space Mono", monospace'; ctx.fillStyle = '#FFC93C'; ctx.textAlign = 'right';
+    ctx.fillText('x = v · t', W - 20, 30);
+    ctx.font = '10px "Space Mono", monospace'; ctx.fillStyle = '#7CF29C';
+    ctx.fillText('Velocidad constante (a = 0)', W - 20, 48);
+
+    requestAnimationFrame(animExit);
+  }
+  requestAnimationFrame(animExit);
+}
+
+function dibujarGraficas(){
+  const marcar=S.marcar;
+  const TX=SEGS.reduce((a,g)=>a+g.dist,0);
+  const TT=SEGS.reduce((a,g)=>a+g.dist/g.v,0);
+  const VMAX=Math.max.apply(null,SEGS.map(g=>g.v));
+
+  const c1=document.getElementById('gXT'), a=c1.getContext('2d');
+  const W=560,H=310,mi=58,md=14,ma=24,mb=34;
+  const AW=W-mi-md, AH=H-ma-mb;
+  const PXt=t=>mi+AW*(t/TT), PYx=x=>(H-mb)-AH*(x/TX);
+  a.fillStyle='#061A17'; a.fillRect(0,0,W,H);
+  a.font='11px "Space Mono", monospace'; a.textAlign='left';
+  a.fillStyle='#7CF29C'; a.fillText('x (m)', 8, 15);
+  a.textAlign='right'; a.fillStyle='#9FBAB0'; a.fillText('t (s)', W-md, H-8); a.textAlign='left';
+  for(let i=0;i<=4;i++){
+    const val=TX*i/4, y=PYx(val);
+    a.strokeStyle=i?'rgba(124,242,156,.10)':'rgba(159,186,176,.6)'; a.lineWidth=i?1:1.5;
+    a.beginPath(); a.moveTo(mi,y); a.lineTo(W-md,y); a.stroke();
+    a.fillStyle='#9FBAB0'; a.font='10px "Space Mono", monospace'; a.textAlign='right';
+    a.fillText(Math.round(val)+'', mi-8, y+4); a.textAlign='left';
+  }
+  a.strokeStyle='rgba(159,186,176,.6)'; a.lineWidth=1.5;
+  a.beginPath(); a.moveTo(mi,ma); a.lineTo(mi,H-mb); a.stroke();
+  a.textAlign='center'; a.fillStyle='#9FBAB0'; a.font='10px "Space Mono", monospace';
+  [0,.25,.5,.75,1].forEach(f=>{ const t=TT*f;
+    a.fillText(fmt(t,0), PXt(t), H-mb+16);
+    if(f>0&&f<1){ a.strokeStyle='rgba(124,242,156,.07)';
+      a.beginPath(); a.moveTo(PXt(t),ma); a.lineTo(PXt(t),H-mb); a.stroke(); } });
+  a.textAlign='left';
+  let t=0,x=0;
+  if(marcar){
+    SEGS.forEach(g=>{
+      const t0=t,x0=x; t+=g.dist/g.v; x+=g.dist;
+      const X0=PXt(t0),Y0=PYx(x0),X1=PXt(t),Y1=PYx(x);
+      a.fillStyle='rgba(255,201,60,.13)';
+      a.beginPath(); a.moveTo(X0,Y0); a.lineTo(X1,Y0); a.lineTo(X1,Y1); a.closePath(); a.fill();
+      a.strokeStyle='rgba(255,201,60,.8)'; a.lineWidth=1.4; a.setLineDash([4,3]);
+      a.beginPath(); a.moveTo(X0,Y0); a.lineTo(X1,Y0); a.lineTo(X1,Y1); a.stroke(); a.setLineDash([]);
+      a.font='700 9px "Space Mono", monospace'; a.fillStyle='#FFC93C'; a.textAlign='center';
+      if(X1-X0>30) a.fillText('Δt', (X0+X1)/2, Y0+11);
+      if(Y0-Y1>28) a.fillText('Δx', X1+13, (Y0+Y1)/2+3);
+      a.textAlign='left';
+    });
+  }
+  a.strokeStyle='#7CF29C'; a.lineWidth=3; a.lineJoin='round';
+  a.beginPath(); a.moveTo(mi,H-mb);
+  t=0;x=0; SEGS.forEach(g=>{ t+=g.dist/g.v; x+=g.dist; a.lineTo(PXt(t),PYx(x)); });
+  a.stroke();
+  t=0;x=0;
+  SEGS.forEach((g,i)=>{
+    const t0=t,x0=x; t+=g.dist/g.v; x+=g.dist;
+    const X0=PXt(t0),Y0=PYx(x0),X1=PXt(t),Y1=PYx(x);
+    a.fillStyle='#FFC93C'; a.beginPath(); a.arc(X1,Y1,4,0,7); a.fill();
+    a.font='700 10px "Space Mono", monospace';
+    if(marcar){
+      a.fillStyle='#F2F6EF'; a.textAlign='left';
+      a.fillText(fmt(g.v,1)+' m/s', X0+6, (Y0+Y1)/2-6);
+    }else{
+      a.fillStyle='#9FBAB0'; a.font='10px "Space Mono", monospace'; a.textAlign='right';
+      a.fillText(g.name, X1-6, Y1+14);
+    }
+    a.textAlign='left';
+  });
+  if(marcar){ a.fillStyle='#FFC93C'; a.font='700 11px "Space Mono", monospace';
+    a.fillText('pendiente = Δx / Δt = velocidad', mi+10, ma+14); }
+
+  const c2=document.getElementById('gVT'), b=c2.getContext('2d');
+  const W2=560,H2=260,mi2=58,md2=14,ma2=24,mb2=34;
+  const AW2=W2-mi2-md2, AH2=H2-ma2-mb2;
+  const PXt2=tt=>mi2+AW2*(tt/TT), PYv=v=>(H2-mb2)-AH2*(v/VMAX);
+  b.fillStyle='#061A17'; b.fillRect(0,0,W2,H2);
+  b.font='11px "Space Mono", monospace'; b.textAlign='left';
+  b.fillStyle='#FFC93C'; b.fillText('v (m/s)', 8, 15);
+  b.textAlign='right'; b.fillStyle='#9FBAB0'; b.fillText('t (s)', W2-md2, H2-8); b.textAlign='left';
+  for(let i=0;i<=4;i++){
+    const val=VMAX*i/4, y=PYv(val);
+    b.strokeStyle=i?'rgba(124,242,156,.10)':'rgba(159,186,176,.6)'; b.lineWidth=i?1:1.5;
+    b.beginPath(); b.moveTo(mi2,y); b.lineTo(W2-md2,y); b.stroke();
+    b.fillStyle='#9FBAB0'; b.font='10px "Space Mono", monospace'; b.textAlign='right';
+    b.fillText(Math.round(val)+'', mi2-8, y+4); b.textAlign='left';
+  }
+  b.strokeStyle='rgba(159,186,176,.6)'; b.lineWidth=1.5;
+  b.beginPath(); b.moveTo(mi2,ma2); b.lineTo(mi2,H2-mb2); b.stroke();
+  b.textAlign='center'; b.fillStyle='#9FBAB0'; b.font='10px "Space Mono", monospace';
+  [0,.25,.5,.75,1].forEach(f=>b.fillText(fmt(TT*f,0), PXt2(TT*f), H2-mb2+16));
+  b.textAlign='left';
+  let tt=0;
+  if(marcar){
+    tt=0;
+    SEGS.forEach(g=>{
+      const t0=tt; tt+=g.dist/g.v;
+      const X0=PXt2(t0),X1=PXt2(tt),Y=PYv(g.v),Y0=PYv(0);
+      b.fillStyle='rgba(124,242,156,.22)'; b.fillRect(X0,Y,X1-X0,Y0-Y);
+      b.strokeStyle='rgba(124,242,156,.75)'; b.lineWidth=1; b.strokeRect(X0,Y,X1-X0,Y0-Y);
+      b.font='700 10px "Space Mono", monospace'; b.textAlign='center'; b.fillStyle='#7CF29C';
+      if(Y0-Y>20) b.fillText(g.dist+' m',(X0+X1)/2,(Y+Y0)/2+4);
+      else b.fillText(g.dist+' m',(X0+X1)/2,Y-6);
+      b.textAlign='left';
+    });
+  }
+  b.strokeStyle='#FFC93C'; b.lineWidth=3; b.lineJoin='round';
+  tt=0; b.beginPath(); b.moveTo(mi2,H2-mb2);
+  SEGS.forEach(g=>{ const y=PYv(g.v);
+    b.lineTo(PXt2(tt),y); tt+=g.dist/g.v; b.lineTo(PXt2(tt),y); });
+  b.lineTo(PXt2(tt),PYv(0)); b.stroke();
+  if(marcar){ b.fillStyle='#7CF29C'; b.font='700 11px "Space Mono", monospace';
+    b.fillText('área = v · t = distancia · las seis suman '+TX+' m', mi2+10, ma2+14); }
+}
+
+function abrirMenu(){
+  S.screen='menu'; hideAll(); scMenu.hidden=false; scMenu.scrollTop=0;
+}
+
+const chips=document.getElementById('chips');
+SEGS.forEach((g,i)=>{
+  const b=document.createElement('button');
+  b.className='chip'; b.innerHTML='<b>'+g.n+'</b> '+g.name+' · '+fmt(g.v,1)+' m/s';
+  b.onclick=()=>{ S.totalT=0; S.totalX=0; S.graf=[]; iniciarTramo(i); };
+  chips.appendChild(b);
+});
+document.getElementById('bStart').onclick=()=>{ S.totalT=0; S.totalX=0; S.graf=[]; S.done=[]; iniciarTramo(0); };
+document.getElementById('btnMenu').onclick=abrirMenu;
+document.getElementById('btnSound').onclick=function(){ S.sound=!S.sound; this.textContent = S.sound? '♪ ON':'♪ OFF'; };
+
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r==='number') r={tl:r,tr:r,br:r,bl:r}; else r={tl:0,tr:0,br:0,bl:0};
+    this.beginPath(); this.moveTo(x+r.tl,y);
+    this.lineTo(x+w-r.tr,y); this.quadraticCurveTo(x+w,y,x+w,y+r.tr);
+    this.lineTo(x+w,y+h-r.br); this.quadraticCurveTo(x+w,y+h,x+w-r.br,y+h);
+    this.lineTo(x+r.bl,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r.bl);
+    this.lineTo(x,y+r.tl); this.quadraticCurveTo(x,y,x+r.tl,y);
+    this.closePath(); return this;
+  };
+}
+
+resize(); hud();
+requestAnimationFrame(loop);
+})();
+</script>
+<script>
+(function(){ try{
+  var A=['mundo1-mru.html','mundo2-mua.html','mundo3-caida-libre.html','mundo4-parabolico.html','mundo5-circular.html'];
+  var N=['El rastro','La sombra que huye','Lo que cae','El asalto','La nave'];
+  var ruta=(location.pathname.split('/').pop()||'').toLowerCase();
+  var i=A.indexOf(ruta); if(i<0) A.forEach(function(a,k){ if(ruta.indexOf(a.split('.')[0])>=0) i=k; });
+  var j=new URLSearchParams(location.search).get('j');
+  if(!j){ try{ j=localStorage.getItem('fa_jugador'); }catch(e){} }
+  if(j) j=String(j).replace(/[<>&"']/g,'').slice(0,22);
+  var qs=j? '?j='+encodeURIComponent(j):'';
+  window.FA={ idx:i, qs:qs, jug:j||'', total:A.length,
+    ir:function(k){ if(k<0||k>=A.length) location.href='portada.html?mapa=1'+(qs?'&'+qs.slice(1):''); else location.href=A[k]+qs; },
+    mapa:function(){ location.href='portada.html?mapa=1'+(qs?'&'+qs.slice(1):''); },
+    nombreSig:function(){ return (i>=0&&i+1<A.length)? (i+2)+' · '+N[i+1] : ''; } };
+  var f=document.querySelector('.foot'); if(!f) return;
+  var viejo=f.innerHTML;
+  var bt='display:inline-block;padding:11px 14px;border-radius:12px;cursor:pointer;font-family:'
+    +"'Space Mono',monospace;font-size:11.5px;letter-spacing:.06em;border:1px solid rgba(124,242,156,.3);"
+    +'background:rgba(124,242,156,.08);color:#F2F6EF;';
+  var sig=(i>=0&&i+1<A.length)
+    ? '<button id="faSig" style="'+bt+'background:#FFC93C;color:#06201B;border-color:#FFC93C;font-weight:700">MUNDO '+(i+2)+' · '+N[i+1]+' &#9656;</button>'
+    : '<button id="faSig" style="'+bt+'background:#B388FF;color:#06201B;border-color:#B388FF;font-weight:700">FIN &#183; VOLVER AL MAPA</button>';
+  f.innerHTML='<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:10px">'
+    +'<button id="faMapa" style="'+bt+'">&#9666; MAPA</button>'+sig+'</div>'
+    +(j? '<div style="margin-bottom:6px;color:#7CF29C">JUGADOR: '+j.toUpperCase()+'</div>':'')+viejo;
+  document.getElementById('faMapa').onclick=function(){ window.FA.mapa(); };
+  document.getElementById('faSig').onclick=function(){ window.FA.ir(i+1); };
+}catch(e){} })();
+</script>
+</body>
+</html>

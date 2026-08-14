@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>La Física-Aventura · Mundo 4: Movimiento Parabólico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --selva:#08211D; --selva2:#0E332C; --lima:#7CF29C; --oro:#FFC93C;
+  --arcilla:#E2673C; --morado:#B388FF; --hueso:#F2F6EF; --niebla:#9FBAB0;
+  --display:'Archivo Black', Impact, sans-serif;
+  --texto:'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --dato:'Space Mono', ui-monospace, 'Courier New', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--selva);color:var(--hueso);font-family:var(--texto);
+  overflow-x:hidden;display:flex;flex-direction:column;align-items:center;padding:0 0 env(safe-area-inset-bottom)}
+#app{width:100%;max-width:660px;display:flex;flex-direction:column;min-height:100%}
+.topbar{display:flex;align-items:center;gap:8px;padding:8px 12px;
+  border-bottom:1px solid rgba(124,242,156,.18);background:linear-gradient(180deg,#0B2A24,#08211D)}
+.brand{font-family:var(--display);font-size:12.5px;line-height:1.05}
+.brand small{display:block;font-family:var(--dato);font-size:9px;color:var(--arcilla);letter-spacing:.14em}
+.topbar .sp{flex:1}
+.iconbtn{background:rgba(124,242,156,.09);border:1px solid rgba(124,242,156,.25);color:var(--hueso);
+  border-radius:9px;padding:7px 9px;font-family:var(--dato);font-size:10.5px;cursor:pointer}
+.iconbtn.on{background:rgba(255,201,60,.16);border-color:rgba(255,201,60,.5);color:var(--oro)}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(124,242,156,.14)}
+.cell{background:#0B2A24;padding:6px 8px;min-width:0}
+.cell .lab{font-family:var(--dato);font-size:8.5px;letter-spacing:.11em;color:var(--niebla);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell .val{font-family:var(--dato);font-weight:700;font-size:15px;line-height:1.25;white-space:nowrap}
+.cell .val em{font-style:normal;font-size:10px;color:var(--niebla)}
+.c1 .val{color:var(--lima)} .c2 .val{color:var(--oro)} .c3 .val{color:var(--arcilla)} .c4 .val{color:var(--morado)}
+.eq{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;background:#061A17;
+  border-bottom:1px solid rgba(124,242,156,.18);padding:7px 10px;font-family:var(--dato);font-size:12px}
+.eq b{color:var(--lima)} .eq .t{color:var(--oro)} .eq .op{color:var(--niebla)}
+#wrap{position:relative;width:100%;background:#061A17;line-height:0}
+canvas{display:block;width:100%;touch-action:none}
+#graf{border-top:1px solid rgba(124,242,156,.2)}
+.aviso{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-family:var(--dato);font-size:12px;
+  padding:5px 12px;border-radius:20px;background:rgba(6,26,23,.85);border:1px solid rgba(124,242,156,.35);
+  color:var(--lima);opacity:0;transition:opacity .2s;text-align:center;max-width:92%}
+.aviso.ver{opacity:1}
+.pad{padding:10px 12px 14px}
+.fila{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pad button.big{width:100%;font-family:var(--display);font-size:22px;padding:16px 8px;border-radius:14px;
+  border:none;cursor:pointer;color:#06201B;background:var(--lima);box-shadow:0 4px 0 #3FAE72}
+.pad button.big.oro{background:var(--oro);box-shadow:0 4px 0 #C1901F}
+.pad button.big:active{transform:translateY(4px);box-shadow:none}
+.pad button.big span{display:block;font-family:var(--dato);font-size:9px;letter-spacing:.1em;opacity:.7;margin-top:2px}
+.ctrl{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.ctrl label{font-family:var(--dato);font-size:10.5px;color:var(--niebla);width:96px;flex:none;letter-spacing:.04em}
+.ctrl output{font-family:var(--dato);font-size:12.5px;font-weight:700;color:var(--lima);width:74px;text-align:right;flex:none}
+input[type=range]{flex:1;accent-color:#7CF29C;height:22px}
+.sw{display:flex;gap:8px;margin:4px 0 10px}
+.sw button{flex:1;font-family:var(--dato);font-size:11px;padding:9px;border-radius:10px;cursor:pointer;
+  background:rgba(124,242,156,.07);border:1px solid rgba(124,242,156,.25);color:var(--hueso)}
+.sw button.on{background:rgba(124,242,156,.22);border-color:var(--lima);color:var(--hueso)}
+.screen{position:fixed;inset:0;z-index:40;background:rgba(4,17,15,.94);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:18px 14px 40px}
+.screen[hidden]{display:none}
+.card{width:100%;max-width:600px;background:linear-gradient(180deg,#0E332C,#0A2620);
+  border:1px solid rgba(124,242,156,.22);border-radius:18px;padding:20px 18px;margin:auto 0}
+.eyebrow{font-family:var(--dato);font-size:10px;letter-spacing:.22em;color:var(--arcilla)}
+h1{font-family:var(--display);font-size:clamp(26px,7vw,40px);line-height:.95;margin:6px 0 4px}
+h1 .acc{color:var(--arcilla)}
+h2{font-family:var(--display);font-size:20px;margin:2px 0 10px}
+p{font-size:14.5px;line-height:1.55;color:#DCE7DF}
+.lead{color:var(--niebla);font-size:14px;line-height:1.5;margin-bottom:14px}
+.modo{display:block;width:100%;text-align:left;margin-bottom:10px;padding:14px;border-radius:14px;cursor:pointer;
+  background:rgba(124,242,156,.06);border:1px solid rgba(124,242,156,.25);color:var(--hueso)}
+.modo b{display:block;font-family:var(--display);font-size:17px;margin-bottom:4px}
+.modo small{font-family:var(--texto);font-size:13px;color:var(--niebla);line-height:1.45;display:block}
+.modo i{font-family:var(--dato);font-size:10px;color:var(--oro);font-style:normal;letter-spacing:.1em}
+.cta{width:100%;margin-top:14px;padding:15px;border:none;border-radius:14px;cursor:pointer;
+  font-family:var(--display);font-size:18px;color:#06201B;background:var(--lima);box-shadow:0 4px 0 #3FAE72}
+.cta:active{transform:translateY(4px);box-shadow:none}
+.ghost{width:100%;margin-top:8px;padding:12px;border-radius:12px;cursor:pointer;background:transparent;
+  border:1px solid rgba(124,242,156,.3);color:var(--hueso);font-family:var(--dato);font-size:12px}
+.datos{width:100%;border-collapse:collapse;margin:12px 0;font-family:var(--dato);font-size:13px}
+.datos td{padding:8px 6px;border-bottom:1px dashed rgba(124,242,156,.18)}
+.datos td:first-child{color:var(--niebla);font-size:11px}
+.datos td:last-child{text-align:right;font-weight:700}
+.hi{color:var(--lima)} .hi2{color:var(--oro)} .hi3{color:var(--arcilla)}
+.formula{font-family:var(--dato);font-size:13px;text-align:center;background:#061A17;
+  border:1px solid rgba(124,242,156,.2);border-radius:12px;padding:12px 8px;margin:6px 0 14px;color:var(--lima)}
+.formula small{display:block;color:var(--niebla);font-size:10.5px;margin-top:5px;letter-spacing:.06em}
+.q{background:#061A17;border:1px solid rgba(226,103,60,.4);border-radius:14px;padding:14px;margin-top:8px}
+.q .num{font-family:var(--dato);font-size:10px;letter-spacing:.18em;color:var(--arcilla)}
+.q p{margin:6px 0 10px}
+.opt{display:block;width:100%;text-align:left;margin-bottom:7px;padding:11px 12px;border-radius:11px;
+  border:1px solid rgba(124,242,156,.22);background:rgba(124,242,156,.05);color:var(--hueso);
+  font-family:var(--texto);font-size:14px;cursor:pointer;line-height:1.35}
+.opt b{font-family:var(--dato);color:var(--lima);margin-right:7px}
+.opt.ok{background:rgba(124,242,156,.22);border-color:var(--lima)}
+.opt.no{background:rgba(226,103,60,.18);border-color:var(--arcilla)}
+.fb{font-size:13.5px;line-height:1.5;margin-top:8px;padding:10px;border-radius:10px;background:rgba(124,242,156,.08)}
+.fb.bad{background:rgba(226,103,60,.14)}
+.escena{background:#061A17;border-left:3px solid var(--arcilla,#E2673C);border-radius:0 12px 12px 0;
+  padding:13px 15px;margin:12px 0;font-size:14px;line-height:1.65;color:#DCE7DF}
+.escena .dice{color:var(--oro)}
+.foot{padding:10px 14px 22px;text-align:center;font-family:var(--dato);font-size:10px;color:#43604F}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="brand">LA FÍSICA-AVENTURA<small id="subt">MUNDO 4 · PARABÓLICO</small></div>
+    <div class="sp"></div>
+    <button class="iconbtn" id="btnGraf">GRÁFICAS</button>
+    <button class="iconbtn on" id="btnSound">♪</button>
+    <button class="iconbtn" id="btnMenu">MENÚ</button>
+  </div>
+
+  <div class="hud">
+    <div class="cell c1"><div class="lab" id="l1">—</div><div class="val" id="v1">—</div></div>
+    <div class="cell c2"><div class="lab" id="l2">—</div><div class="val" id="v2">—</div></div>
+    <div class="cell c3"><div class="lab" id="l3">—</div><div class="val" id="v3">—</div></div>
+    <div class="cell c4"><div class="lab" id="l4">—</div><div class="val" id="v4">—</div></div>
+  </div>
+  <div class="eq" id="eqbar"></div>
+
+  <div id="wrap">
+    <canvas id="cv"></canvas>
+    <div class="aviso" id="aviso"></div>
+  </div>
+  <canvas id="graf"></canvas>
+
+  <div class="pad" id="pad"></div>
+  <div class="foot">I.E. JOSEFA CAMPOS · BELLO, ANTIOQUIA · PREPARACIÓN SABER 11</div>
+</div>
+
+<div class="screen" id="scMenu">
+  <div class="card">
+    <div class="eyebrow">MUNDO 4 DE 5 · CINEMÁTICA</div>
+    <h1>El asalto <span class="acc">parabólico</span></h1>
+    <div class="escena">La nave bajó a recargar energía sobre el claro del bosque.<br>
+      Para inmovilizarla, Yaruma tiene que meter un proyectil en la escotilla de carga.<br>
+      <span class="dice">—No apuntes a la nave —le dijo la anciana—. Apunta al aire. La gravedad se encarga de doblar la línea.</span></div>
+    <p class="lead">Dos movimientos independientes ocurriendo al mismo tiempo: un MRU horizontal que no cambia y una caída libre vertical gobernada por la gravedad. Tres formas de dominar la parábola.</p>
+    <button class="modo" data-m="asalto"><b>El asalto a la nave</b>
+      <small>Ajusta el ángulo (15° a 75°) y la velocidad de lanzamiento para darle a la nave. En tres de los cuatro niveles la nave se mueve a velocidad constante.</small>
+      <i>g = 10 m/s²</i></button>
+    <button class="modo" data-m="complemento"><b>La ley de los 90°</b>
+      <small>Lanza con dos ángulos que sumen 90° (por ejemplo 30° y 60°) con la misma rapidez. Míralos volar juntos: caen exactamente en el mismo punto.</small>
+      <i>g = 10 m/s²</i></button>
+    <button class="modo" data-m="descomponer"><b>Ver las dos velocidades</b>
+      <small>Observa los vectores v_x (horizontal, verde) y v_y (vertical, amarillo) durante todo el vuelo. Nota cómo v_x nunca cambia y v_y se hace cero arriba.</small>
+      <i>g = 10 m/s²</i></button>
+    <div class="formula">x = v_x · t &nbsp;·&nbsp; y = v_y0 · t − ½·g·t² &nbsp;·&nbsp; R = (v₀² / g) · sin(2θ)<small>EN EL PUNTO MÁS ALTO v_y = 0 PERO v_x NO SE APAGA: v = v_x ≠ 0</small></div>
+  </div>
+</div>
+
+<div class="screen" id="scPanel" hidden><div class="card" id="panelCard"></div></div>
+
+<script>
+(function(){
+"use strict";
+
+const LW=620, LWG=620, HG=200;
+const G=10;
+
+const S={ modo:'menu', verGraf:false, sonido:true, t:0, anim:0, aviso:0 };
+
+let AC=null;
+function beep(f,d,tipo,vol){ if(!S.sonido) return;
+  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.type=tipo||'square'; o.frequency.value=f;
+    g.gain.setValueAtTime(vol||.05,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);
+    o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime+d);
+  }catch(e){}
+}
+
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const cg=document.getElementById('graf'), gx=cg.getContext('2d');
+let SC=1, LH=380, SCG=1;
+
+function resize(){
+  const w=document.getElementById('wrap').clientWidth;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const reserva = 160 + (S.verGraf? w*(HG/LWG) : 0) + 180;
+  let h=Math.round(Math.min(w*0.62, Math.max(220, window.innerHeight-reserva)));
+  cv.style.height=h+'px'; cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  SC=(w*dpr)/LW; LH=cv.height/SC; ctx.setTransform(SC,0,0,SC,0,0);
+  cg.style.display=S.verGraf?'block':'none';
+  const hg=Math.round(w*(HG/LWG));
+  cg.style.height=hg+'px'; cg.width=Math.round(w*dpr); cg.height=Math.round(hg*dpr);
+  SCG=(w*dpr)/LWG; gx.setTransform(SCG,0,0,SCG,0,0);
+}
+window.addEventListener('resize',resize);
+function fmt(n,d){ return (isFinite(n)?n:0).toFixed(d===undefined?1:d).replace('.',','); }
+function celda(i,lab,val){ document.getElementById('l'+i).textContent=lab;
+  document.getElementById('v'+i).innerHTML=val; }
+function aviso(txt,seg){ const el=document.getElementById('aviso');
+  el.innerHTML=txt; el.classList.add('ver'); S.aviso=seg||1.8; }
+
+/* ================= GRÁFICAS ================= */
+function tricolor(c,W,H,cfg){
+  c.clearRect(0,0,W,H); c.fillStyle='#061A17'; c.fillRect(0,0,W,H);
+  const izq=46,der=12,arr=8,aba=18,sep=8, ph=(H-arr-aba-2*sep)/3;
+  cfg.plots.forEach((p,i)=>{
+    const X=izq, Y=arr+i*(ph+sep), w=W-izq-der, h=ph;
+    c.fillStyle='rgba(124,242,156,.04)'; c.fillRect(X,Y,w,h);
+    c.strokeStyle='rgba(159,186,176,.45)'; c.lineWidth=1;
+    c.beginPath(); c.moveTo(X,Y); c.lineTo(X,Y+h); c.lineTo(X+w,Y+h); c.stroke();
+    const py=v=>Y+h-(Math.max(p.yMin,Math.min(p.yMax,v))-p.yMin)/(p.yMax-p.yMin)*h;
+    const px=t=>X+Math.min(t,cfg.tMax)/cfg.tMax*w;
+    if(p.cero){ c.strokeStyle='rgba(159,186,176,.3)'; c.setLineDash([4,4]);
+      c.beginPath(); c.moveTo(X,py(0)); c.lineTo(X+w,py(0)); c.stroke(); c.setLineDash([]); }
+    c.font='10px "Space Mono", monospace'; c.textAlign='right'; c.fillStyle='#9FBAB0';
+    c.fillText(p.etq,X-6,Y+11); c.fillText(String(p.yMax),X-6,Y+22); c.fillText(String(p.yMin),X-6,Y+h-2);
+    c.textAlign='left';
+    p.series.forEach(s=>{
+      if(!s.pts.length) return;
+      c.strokeStyle=s.color; c.lineWidth=2; c.lineJoin='round';
+      if(s.dash) c.setLineDash([5,4]);
+      c.beginPath(); s.pts.forEach((d,j)=>{ const A=px(d.t),B=py(d.v); j?c.lineTo(A,B):c.moveTo(A,B); });
+      c.stroke(); c.setLineDash([]);
+      const u=s.pts[s.pts.length-1];
+      c.fillStyle=s.color; c.beginPath(); c.arc(px(u.t),py(u.v),3,0,7); c.fill();
+    });
+    if(i===2){ c.fillStyle='#9FBAB0'; c.textAlign='right';
+      c.font='10px "Space Mono", monospace'; c.fillText('t = '+fmt(cfg.tMax,1)+' s',X+w,Y+h+14); }
+  });
+}
+
+/* ================= MODO 1 · EL ASALTO A LA NAVE ================= */
+const N={ nivel:1, v0:28, ang:45, lanzando:false, t:0,
+  p:{x:0,y:0,vx:0,vy:0}, traza:[], nave:{x:60,y:20,vx:0,w:8,h:3.5,hit:false},
+  intentos:0, aciertos:0, muestras:[] };
+
+const NIVELES=[
+  {n:1, txt:'Nave quieta a 60 m', x:60, y:20, vx:0},
+  {n:2, txt:'Nave huyendo a 5 m/s', x:35, y:22, vx:5},
+  {n:3, txt:'Nave acercándose a 8 m/s', x:75, y:25, vx:-8},
+  {n:4, txt:'Nave alta huyendo a 10 m/s', x:30, y:35, vx:10}
+];
+
+function asaltoIniciar(){
+  S.modo='asalto'; S.verGraf=false;
+  document.getElementById('btnGraf').classList.remove('on');
+  N.nivel=1; N.intentos=0; N.aciertos=0;
+  pad('<div class="ctrl"><label>ÁNGULO θ</label><input type="range" id="sA" min="15" max="75" step="1" value="'+N.ang+'"><output id="oA">'+N.ang+'°</output></div>'+
+   '<div class="ctrl"><label>RAPIDEZ v₀</label><input type="range" id="sV" min="10" max="40" step="1" value="'+N.v0+'"><output id="oV">'+N.v0+' m/s</output></div>'+
+   '<button class="big oro" id="bFire">¡FUEGO!<span>LANZAR PROYECTIL</span></button>');
+  const sA=document.getElementById('sA'), sV=document.getElementById('sV');
+  sA.addEventListener('input',()=>{ N.ang=+sA.value; document.getElementById('oA').textContent=N.ang+'°'; });
+  sV.addEventListener('input',()=>{ N.v0=+sV.value; document.getElementById('oV').textContent=N.v0+' m/s'; });
+  document.getElementById('bFire').onclick=asaltoLanzar;
+  document.getElementById('eqbar').innerHTML=
+    '<span class="op">v_x = v₀·cosθ</span><b> (constante)</b>'+
+    '<span class="op">·&nbsp;v_y = v₀·sinθ − 10·t</span>'+
+    '<span class="op">·&nbsp;alcance R = (v₀²/10)·sin(2θ)</span>';
+  ocultar(); resize(); asaltoCargarNivel();
+}
+function asaltoCargarNivel(){
+  const cfg=NIVELES[N.nivel-1];
+  N.lanzando=false; N.t=0; N.traza=[]; N.muestras=[];
+  N.p={x:0,y:0,vx:0,vy:0};
+  N.nave={x:cfg.x, y:cfg.y, vx:cfg.vx, w:9, h:4, hit:false};
+  aviso('Nivel '+N.nivel+' de 4: '+cfg.txt,2.8);
+}
+function asaltoLanzar(){
+  if(N.lanzando) return;
+  N.lanzando=true; N.t=0; N.traza=[]; N.muestras=[];
+  const rad=N.ang*Math.PI/180;
+  N.p.vx=N.v0*Math.cos(rad); N.p.vy=N.v0*Math.sin(rad);
+  N.p.x=0; N.p.y=0; N.intentos++;
+  beep(440,.08,'triangle',.05); setTimeout(()=>beep(880,.12,'triangle',.05),60);
+}
+function asaltoUpdate(dt){
+  if(!N.lanzando){
+    if(N.nave.vx!==0){
+      N.nave.x += N.nave.vx*dt;
+      if(N.nave.x>88) N.nave.x=20; if(N.nave.x<15) N.nave.x=80;
+    }
+    asaltoHud(); return;
+  }
+  N.t+=dt;
+  N.p.vy -= G*dt;
+  N.p.x  += N.p.vx*dt;
+  N.p.y  += N.p.vy*dt;
+  N.nave.x += N.nave.vx*dt;
+  if(N.nave.x>90) N.nave.x=15; if(N.nave.x<10) N.nave.x=80;
+  N.traza.push({x:N.p.x,y:Math.max(0,N.p.y)});
+  N.muestras.push({t:N.t, x:N.p.x, y:Math.max(0,N.p.y), vx:N.p.vx, vy:N.p.vy});
+  const dx=Math.abs(N.p.x-N.nave.x), dy=Math.abs(N.p.y-N.nave.y);
+  if(dx<N.nave.w/2 && dy<N.nave.h/2){
+    N.lanzando=false; N.nave.hit=true; N.aciertos++;
+    beep(1040,.12,'square',.06); setTimeout(()=>beep(1320,.18,'square',.06),100);
+    aviso('¡IMPACTO! Nivel '+N.nivel+' superado en '+N.t.toFixed(1)+' s',2.5);
+    setTimeout(()=>{
+      if(N.nivel<4){ N.nivel++; asaltoCargarNivel(); }
+      else asaltoPanel();
+    },2200);
+  } else if(N.p.y<=0 && N.t>0.1){
+    N.p.y=0; N.lanzando=false;
+    beep(160,.2,'sawtooth',.06);
+    aviso('Fallaste: el proyectil cayó a '+fmt(N.p.x,1)+' m. Intenta otro ángulo o velocidad.',2.4);
+  }
+  asaltoHud();
+}
+function asaltoHud(){
+  const rad=N.ang*Math.PI/180;
+  celda(1,'ÁNGULO θ',N.ang+'°');
+  celda(2,'v_x (cte)',fmt(N.v0*Math.cos(rad),1)+' <em>m/s</em>');
+  celda(3,'v_y inicial',fmt(N.v0*Math.sin(rad),1)+' <em>m/s</em>');
+  celda(4,'NIVEL',N.nivel+' <em>/4</em>');
+}
+function asaltoRender(){
+  const esc=Math.min(LW/100, LH/50);
+  const Y=m=>LH-18-m*esc, X=m=>10+m*esc;
+  const g1=ctx.createLinearGradient(0,0,0,LH);
+  g1.addColorStop(0,'#0B2A24'); g1.addColorStop(1,'#1E5C40');
+  ctx.fillStyle=g1; ctx.fillRect(0,0,LW,LH);
+  ctx.fillStyle='#7A4A2B'; ctx.fillRect(0,Y(0),LW,LH-Y(0)+20);
+  ctx.fillStyle='#3FAE5A'; ctx.fillRect(0,Y(0)-4,LW,6);
+  ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='10px "Space Mono", monospace';
+  for(let m=0;m<=90;m+=10){
+    ctx.fillRect(X(m)-1,Y(0)+2,2,6); ctx.fillText(m+'m',X(m)-10,Y(0)+18);
+  }
+  ctx.strokeStyle='rgba(255,201,60,.4)'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+  ctx.beginPath(); N.traza.forEach((p,i)=>{ i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); });
+  ctx.stroke(); ctx.setLineDash([]);
+  const nx=X(N.nave.x), ny=Y(N.nave.y), nw=N.nave.w*esc, nh=N.nave.h*esc;
+  ctx.fillStyle=N.nave.hit?'#FFC93C':'#B388FF';
+  ctx.beginPath(); ctx.ellipse(nx,ny,nw/2,nh/2,0,0,7); ctx.fill();
+  ctx.fillStyle='#14232B'; ctx.beginPath(); ctx.ellipse(nx,ny-nh*.2,nw*.3,nh*.3,0,0,7); ctx.fill();
+  if(N.nave.vx!==0){
+    ctx.strokeStyle='rgba(255,201,60,.7)'; ctx.lineWidth=2;
+    const dir=N.nave.vx>0?1:-1;
+    ctx.beginPath(); ctx.moveTo(nx+dir*nw*.6,ny); ctx.lineTo(nx+dir*(nw*.6+14),ny); ctx.stroke();
+  }
+  if(N.lanzando||N.p.x>0){
+    const px=X(N.p.x), py=Y(N.p.y);
+    ctx.fillStyle='#F59E0B'; ctx.beginPath(); ctx.arc(px,py,6,0,7); ctx.fill();
+    ctx.fillStyle='#FEF08A'; ctx.beginPath(); ctx.arc(px,py,3,0,7); ctx.fill();
+    const scV=0.5;
+    ctx.strokeStyle='#7CF29C'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px+N.p.vx*scV*esc,py); ctx.stroke();
+    ctx.strokeStyle='#FFC93C';
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py-N.p.vy*scV*esc); ctx.stroke();
+  }
+  dibujarLanzadorYaruma(X(0), Y(0), N.ang);
+}
+
+function dibujarLanzadorYaruma(x, y, angDeg){
+  const rad = angDeg * Math.PI / 180;
+  // Sombra
+  ctx.fillStyle='rgba(0,0,0,.3)';
+  ctx.beginPath(); ctx.ellipse(x+4, y, 16, 5, 0, 0, 7); ctx.fill();
+
+  // Piernas cobrizas
+  ctx.strokeStyle='#C27833'; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x, y-14); ctx.lineTo(x-6, y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x, y-14); ctx.lineTo(x+6, y); ctx.stroke();
+
+  // Túnica verde esmeralda y faja
+  ctx.fillStyle='#0D6857';
+  ctx.beginPath(); ctx.roundRect(x-6, y-28, 12, 16, 4); ctx.fill();
+  ctx.fillStyle='#DC2626'; ctx.fillRect(x-6, y-19, 12, 3);
+  ctx.fillStyle='#F59E0B'; ctx.fillRect(x-6, y-17, 12, 2);
+
+  // Cabeza cobriza, cabello azabache, vincha y pluma
+  ctx.fillStyle='#C27833'; ctx.beginPath(); ctx.arc(x, y-33, 6, 0, 7); ctx.fill();
+  ctx.fillStyle='#0B1320'; ctx.beginPath(); ctx.arc(x, y-34, 6, Math.PI*0.8, Math.PI*2.2); ctx.fill();
+  ctx.fillStyle='#DC2626'; ctx.fillRect(x-5, y-36, 10, 2);
+  ctx.fillStyle='#10B981'; ctx.beginPath(); ctx.ellipse(x-3, y-40, 2, 5, -0.2, 0, 7); ctx.fill();
+  ctx.fillStyle='#EF4444'; ctx.beginPath(); ctx.ellipse(x+1, y-39, 1.5, 4, 0.2, 0, 7); ctx.fill();
+
+  // Cañón ceremonial / Átlatl de madera noble y oro apuntando a angDeg
+  const len = 32;
+  const lx = x + Math.cos(rad)*len, ly = y-22 - Math.sin(rad)*len;
+  ctx.strokeStyle='#78350F'; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x, y-22); ctx.lineTo(lx, ly); ctx.stroke();
+  ctx.strokeStyle='#F59E0B'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(x, y-22); ctx.lineTo(lx, ly); ctx.stroke();
+  // Anillos de oro en la boca del lanzador
+  ctx.fillStyle='#FDE047'; ctx.beginPath(); ctx.arc(lx, ly, 4, 0, 7); ctx.fill();
+
+  // Etiqueta del ángulo
+  ctx.fillStyle='#7CF29C'; ctx.font='700 11px "Space Mono", monospace';
+  ctx.fillText(angDeg+'°', x+28, y-30);
+}
+function asaltoGraficas(){
+  const m=N.muestras; if(!m.length) return;
+  const tM=Math.max(2,Math.ceil(N.t*1.1*10)/10);
+  tricolor(gx,LWG,HG,{ tMax:tM, plots:[
+    {etq:'y (m)',yMin:0,yMax: Math.max(30,Math.ceil(Math.max.apply(null,m.map(d=>d.y))/10)*10),
+      series:[{color:'#7CF29C',pts:m.map(d=>({t:d.t,v:d.y}))}]},
+    {etq:'v_y (m/s)',yMin:-30,yMax:30,cero:true,
+      series:[{color:'#FFC93C',pts:m.map(d=>({t:d.t,v:d.vy}))}]},
+    {etq:'v_x (m/s)',yMin:0,yMax:40,
+      series:[{color:'#B388FF',pts:m.map(d=>({t:d.t,v:d.vx}))}]}
+  ]});
+}
+function asaltoPanel(){
+  panel(
+   '<div class="eyebrow">ESTACIÓN DE DATOS · EL ASALTO</div>'+
+   '<h2>¡Inmovilizaste la nave!</h2>'+
+   '<table class="datos">'+
+   '<tr><td>NIVELES COMPLETADOS</td><td class="hi">4 de 4</td></tr>'+
+   '<tr><td>INTENTOS TOTALES</td><td>'+N.intentos+'</td></tr>'+
+   '<tr><td>ÁNGULO QUE MÁXIMO ALCANCE DA</td><td class="hi2">45°</td></tr>'+
+   '</table>'+
+   '<div class="escena-wrap" style="margin:18px 0;background:#04110F;border:1px solid rgba(124,242,156,.3);border-radius:16px;overflow:hidden">'+
+     '<div style="display:flex;align-items:center;padding:8px 12px;background:#08211D;border-bottom:1px solid rgba(124,242,156,.2);gap:10px">'+
+       '<span style="font-family:var(--dato);font-size:10px;color:var(--oro);letter-spacing:.2em;flex:1">ESCENA DE SALIDA · PARABÓLICO</span>'+
+       '<button id="bVozExit" class="chip" style="background:rgba(255,201,60,.18);border:1px solid rgba(255,201,60,.5);color:var(--oro);padding:4px 8px;border-radius:6px;font-family:var(--dato);font-size:10px;cursor:pointer">🔊 VOZ</button>'+
+       '<button id="bReplayExit" class="chip" style="background:rgba(124,242,156,.15);border:1px solid rgba(124,242,156,.3);color:var(--hueso);padding:4px 8px;border-radius:6px;font-family:var(--dato);font-size:10px;cursor:pointer">↻ REPETIR</button>'+
+     '</div>'+
+     '<canvas id="cineExit" width="560" height="240" style="display:block;width:100%;height:auto;background:#04110F"></canvas>'+
+     '<div style="padding:12px 14px;background:rgba(6,26,23,.9)">'+
+       '<div id="quienExit" style="font-family:var(--dato);font-size:10px;color:var(--oro);letter-spacing:.18em;margin-bottom:4px">LA ANCIANA</div>'+
+       '<p id="lineaExit" style="font-size:14px;line-height:1.55;color:var(--hueso);margin:0">No apuntes directo a la nave. Apunta al aire.</p>'+
+     '</div>'+
+   '</div>'+
+   '<div class="formula">t_vuelo = (2·v₀·sinθ)/g &nbsp;·&nbsp; h_max = (v₀²·sin²θ)/(2g)<small>EN EL PUNTO MÁS ALTO LA VELOCIDAD VERTICAL ES ZERO, PERO LA HORIZONTAL SIGUE VIVA</small></div>',
+   { t:'Un proyectil se lanza con velocidad v₀ y ángulo θ. Justo en el punto más alto de su trayectoria parabólica, su velocidad es:',
+     o:['Cero','v₀','v₀ · cosθ','v₀ · sinθ'], c:2,
+     e:'En el punto más alto la componente vertical v_y vale cero, pero la componente horizontal v_x = v₀·cosθ se mantiene idéntica durante todo el vuelo porque no hay aceleración horizontal. Por eso la velocidad total en la cima no es cero, sino v_x = v₀·cosθ.' },
+   'JUGAR OTRA RONDA', asaltoIniciar);
+  iniciarEscenaSalidaParabolico();
+}
+
+/* ================= MODO 2 · ÁNGULOS COMPLEMENTARIOS (90°) ================= */
+const C={ v0:25, a1:30, a2:60, corriendo:false, t:0, p1:[], p2:[], tMax:0, R:0 };
+
+function compIniciar(){
+  S.modo='complemento'; S.verGraf=false;
+  document.getElementById('btnGraf').classList.remove('on');
+  document.getElementById('eqbar').innerHTML=
+    '<span class="op">θ₁ + θ₂ = 90°</span><b> → MISMO ALCANCE R</b>'+
+    '<span class="op">·&nbsp;R = (v₀²/g)·sin(2θ)&nbsp;·&nbsp;sin(2·30°) = sin(120°) = sin(60°)</span>';
+  pad('<div class="ctrl"><label>ÁNGULO 1 (θ₁)</label><input type="range" id="sA1" min="15" max="75" step="1" value="'+C.a1+'"><output id="oA1">'+C.a1+'°</output></div>'+
+   '<div class="ctrl"><label>ÁNGULO 2 (θ₂)</label><input type="range" id="sA2" min="15" max="75" step="1" value="'+(90-C.a1)+'"><output id="oA2">'+(90-C.a1)+'°</output></div>'+
+   '<div class="ctrl"><label>RAPIDEZ v₀</label><input type="range" id="sV" min="15" max="35" step="1" value="'+C.v0+'"><output id="oV">'+C.v0+' m/s</output></div>'+
+   '<button class="big oro" id="bComp">LANZAR LOS DOS<span>MISMA RAPIDEZ v₀</span></button>');
+  const sA1=document.getElementById('sA1'), sA2=document.getElementById('sA2'), sV=document.getElementById('sV');
+  sA1.addEventListener('input',()=>{ C.a1=+sA1.value; C.a2=90-C.a1;
+    sA2.value=C.a2; document.getElementById('oA1').textContent=C.a1+'°';
+    document.getElementById('oA2').textContent=C.a2+'°'; compReset(); });
+  sA2.addEventListener('input',()=>{ C.a2=+sA2.value; C.a1=90-C.a2;
+    sA1.value=C.a1; document.getElementById('oA1').textContent=C.a1+'°';
+    document.getElementById('oA2').textContent=C.a2+'°'; compReset(); });
+  sV.addEventListener('input',()=>{ C.v0=+sV.value; document.getElementById('oV').textContent=C.v0+' m/s'; compReset(); });
+  document.getElementById('bComp').onclick=compLanzar;
+  ocultar(); resize(); compReset();
+}
+function compReset(){
+  C.corriendo=false; C.t=0; C.p1=[]; C.p2=[];
+  const r1=C.a1*Math.PI/180;
+  C.R=(C.v0*C.v0/G)*Math.sin(2*r1);
+  C.tMax=(2*C.v0*Math.sin(Math.max(r1,(90-C.a1)*Math.PI/180)))/G;
+  compHud();
+}
+function compLanzar(){ compReset(); C.corriendo=true; beep(520,.1,'triangle',.05); }
+function compUpdate(dt){
+  if(!C.corriendo) return;
+  C.t+=dt;
+  const r1=C.a1*Math.PI/180, r2=C.a2*Math.PI/180;
+  const vx1=C.v0*Math.cos(r1), vy10=C.v0*Math.sin(r1);
+  const vx2=C.v0*Math.cos(r2), vy20=C.v0*Math.sin(r2);
+  const y1=vy10*C.t - 0.5*G*C.t*C.t;
+  const y2=vy20*C.t - 0.5*G*C.t*C.t;
+  if(y1>=0) C.p1.push({x:vx1*C.t, y:y1});
+  if(y2>=0) C.p2.push({x:vx2*C.t, y:y2});
+  if(C.t>=C.tMax && C.corriendo){ C.corriendo=false; setTimeout(compPanel,750); }
+  compHud();
+}
+function compHud(){
+  const suma=C.a1+C.a2;
+  celda(1,'θ₁ Y θ₂',C.a1+'° + '+C.a2+'°');
+  celda(2,'SUMA',suma+'° '+(suma===90?'✓':''));
+  celda(3,'ALCANCE R',fmt(C.R,1)+' <em>m</em>');
+  celda(4,'RAPIDEZ',C.v0+' <em>m/s</em>');
+}
+function compRender(){
+  const esc=Math.min(LW/100, LH/50);
+  const Y=m=>LH-18-m*esc, X=m=>10+m*esc;
+  const g1=ctx.createLinearGradient(0,0,0,LH);
+  g1.addColorStop(0,'#0B2A24'); g1.addColorStop(1,'#1E5C40');
+  ctx.fillStyle=g1; ctx.fillRect(0,0,LW,LH);
+  ctx.fillStyle='#7A4A2B'; ctx.fillRect(0,Y(0),LW,LH-Y(0)+20);
+  ctx.fillStyle='#3FAE5A'; ctx.fillRect(0,Y(0)-4,LW,6);
+  ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='10px "Space Mono", monospace';
+  for(let m=0;m<=90;m+=10){ ctx.fillRect(X(m)-1,Y(0)+2,2,6); ctx.fillText(m+'m',X(m)-10,Y(0)+18); }
+  ctx.strokeStyle='#7CF29C'; ctx.lineWidth=2.5;
+  ctx.beginPath(); C.p1.forEach((p,i)=>{ i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); }); ctx.stroke();
+  ctx.strokeStyle='#FFC93C'; ctx.lineWidth=2.5;
+  ctx.beginPath(); C.p2.forEach((p,i)=>{ i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); }); ctx.stroke();
+  if(C.p1.length){ const u=C.p1[C.p1.length-1]; ctx.fillStyle='#7CF29C'; ctx.beginPath(); ctx.arc(X(u.x),Y(u.y),6,0,7); ctx.fill(); }
+  if(C.p2.length){ const u=C.p2[C.p2.length-1]; ctx.fillStyle='#FFC93C'; ctx.beginPath(); ctx.arc(X(u.x),Y(u.y),6,0,7); ctx.fill(); }
+  if(!C.corriendo && C.p1.length>5){
+    ctx.fillStyle='#E2673C'; ctx.beginPath(); ctx.arc(X(C.R),Y(0),8,0,7); ctx.fill();
+    ctx.fillStyle='#F2F6EF'; ctx.font='700 12px "Space Mono", monospace'; ctx.textAlign='center';
+    ctx.fillText('AMBOS CAEN AQUÍ: R = '+fmt(C.R,1)+' m',X(C.R),Y(0)-14); ctx.textAlign='left';
+  }
+}
+function compPanel(){
+  panel(
+   '<div class="eyebrow">ESTACIÓN DE DATOS · ÁNGULOS COMPLEMENTARIOS</div>'+
+   '<h2>Suman 90° → Mismo alcance</h2>'+
+   '<table class="datos">'+
+   '<tr><td>ÁNGULO 1</td><td class="hi">'+C.a1+'°</td></tr>'+
+   '<tr><td>ÁNGULO 2</td><td class="hi2">'+C.a2+'°</td></tr>'+
+   '<tr><td>ALCANCE COMÚN</td><td class="hi3">'+fmt(C.R,1)+' m</td></tr>'+
+   '</table>'+
+   '<p>Matemáticamente R = (v₀²/g)·sin(2θ). Como sin(2·30°) = sin(60°) = sin(2·60°) = sin(120°), dos ángulos que suman 90° siempre producen exactamente el mismo alcance horizontal.</p>'+
+   '<div class="formula">θ₁ + θ₂ = 90° &nbsp;⇒&nbsp; R₁ = R₂<small>EL MÁS ALTO DEMORA MÁS EN EL AIRE, PERO LOS DOS LLEGAN A LA MISMA DISTANCIA</small></div>',
+   { t:'Dos cañones lanzan proyectiles con la misma rapidez v₀: uno a 25° y el otro a 65°. Si se desprecia el aire, ¿cuál cae más lejos?',
+     o:['El de 65°, porque sube más','El de 25°, porque va más rápido horizontalmente','Caen a la misma distancia','Depende del peso del proyectil'], c:2,
+     e:'25° + 65° = 90°. Dos ángulos complementarios disparados con la misma velocidad inicial alcanzan exactamente la misma distancia horizontal R. El de 65° sube más y dura más tiempo volando, pero su v_x es menor; el de 25° vuela menos tiempo pero con mayor v_x. El producto x = v_x · t resulta idéntico en los dos casos.' },
+   'PROBAR OTRO PAR DE ÁNGULOS', compIniciar);
+}
+
+/* ================= MODO 3 · DESCOMPONER VECTORES ================= */
+const D={ v0:28, ang:50, t:0, corriendo:false, traza:[], muestras:[] };
+function descIniciar(){
+  S.modo='descomponer'; S.verGraf=true;
+  document.getElementById('btnGraf').classList.add('on');
+  document.getElementById('eqbar').innerHTML=
+    '<span style="color:#7CF29C">v_x = v₀·cosθ (VERDE, NUNCA CAMBIA)</span>'+
+    '<span style="color:#FFC93C">&nbsp;·&nbsp;v_y = v₀·sinθ − gt (AMARILLO, CAMBIA)</span>';
+  pad('<div class="ctrl"><label>ÁNGULO θ</label><input type="range" id="sA" min="15" max="75" step="1" value="'+D.ang+'"><output id="oA">'+D.ang+'°</output></div>'+
+   '<div class="ctrl"><label>RAPIDEZ v₀</label><input type="range" id="sV" min="15" max="35" step="1" value="'+D.v0+'"><output id="oV">'+D.v0+' m/s</output></div>'+
+   '<button class="big oro" id="bDesc">LANZAR Y OBSERVAR VECTORES</button>');
+  const sA=document.getElementById('sA'), sV=document.getElementById('sV');
+  sA.addEventListener('input',()=>{ D.ang=+sA.value; document.getElementById('oA').textContent=D.ang+'°'; descReset(); });
+  sV.addEventListener('input',()=>{ D.v0=+sV.value; document.getElementById('oV').textContent=D.v0+' m/s'; descReset(); });
+  document.getElementById('bDesc').onclick=descLanzar;
+  ocultar(); resize(); descReset();
+}
+function descReset(){ D.corriendo=false; D.t=0; D.traza=[]; D.muestras=[]; descHud(); }
+function descLanzar(){ descReset(); D.corriendo=true; beep(600,.1,'triangle',.05); }
+function descUpdate(dt){
+  if(!D.corriendo) return;
+  D.t+=dt;
+  const rad=D.ang*Math.PI/180;
+  const vx=D.v0*Math.cos(rad), vy=D.v0*Math.sin(rad) - G*D.t;
+  const x=vx*D.t, y=D.v0*Math.sin(rad)*D.t - 0.5*G*D.t*D.t;
+  if(y<0){ D.corriendo=false; setTimeout(descPanel,800); return; }
+  D.traza.push({x:x,y:y});
+  D.muestras.push({t:D.t, x:x, y:y, vx:vx, vy:vy});
+  descHud();
+}
+function descHud(){
+  const rad=D.ang*Math.PI/180;
+  const vx=D.v0*Math.cos(rad), vy=D.v0*Math.sin(rad)-G*D.t;
+  celda(1,'v_x (HORIZ.)',fmt(vx,1)+' <em>m/s</em>');
+  celda(2,'v_y (VERT.)',fmt(vy,1)+' <em>m/s</em>');
+  celda(3,'ALTURA y',fmt(Math.max(0,D.v0*Math.sin(rad)*D.t-0.5*G*D.t*D.t),1)+' <em>m</em>');
+  celda(4,'TIEMPO t',fmt(D.t,2)+' <em>s</em>');
+}
+function descRender(){
+  const esc=Math.min(LW/100, LH/50);
+  const Y=m=>LH-18-m*esc, X=m=>10+m*esc;
+  const g1=ctx.createLinearGradient(0,0,0,LH);
+  g1.addColorStop(0,'#0B2A24'); g1.addColorStop(1,'#1E5C40');
+  ctx.fillStyle=g1; ctx.fillRect(0,0,LW,LH);
+  ctx.fillStyle='#7A4A2B'; ctx.fillRect(0,Y(0),LW,LH-Y(0)+20);
+  ctx.fillStyle='#3FAE5A'; ctx.fillRect(0,Y(0)-4,LW,6);
+  ctx.strokeStyle='rgba(255,201,60,.4)'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+  ctx.beginPath(); D.traza.forEach((p,i)=>{ i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); }); ctx.stroke(); ctx.setLineDash([]);
+  const rad=D.ang*Math.PI/180;
+  const vx=D.v0*Math.cos(rad), vy=D.v0*Math.sin(rad)-G*D.t;
+  const currX = vx*D.t, currY = Math.max(0, D.v0*Math.sin(rad)*D.t - 0.5*G*D.t*D.t);
+  const px=X(currX), py=Y(currY);
+  ctx.fillStyle='#F2F6EF'; ctx.beginPath(); ctx.arc(px,py,6,0,7); ctx.fill();
+  const scV=0.6;
+  ctx.strokeStyle='#7CF29C'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px+vx*scV*esc, py); ctx.stroke();
+  ctx.strokeStyle='#FFC93C'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px, py-vy*scV*esc); ctx.stroke();
+  ctx.strokeStyle='#B388FF'; ctx.lineWidth=2; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px+vx*scV*esc, py-vy*scV*esc); ctx.stroke(); ctx.setLineDash([]);
+}
+function descGraficas(){
+  const m=D.muestras; if(!m.length) return;
+  const tM=Math.max(2,Math.ceil(D.t*1.1*10)/10);
+  tricolor(gx,LWG,HG,{ tMax:tM, plots:[
+    {etq:'y (m)',yMin:0,yMax:Math.max(30,Math.ceil(Math.max.apply(null,m.map(d=>d.y))/10)*10),
+      series:[{color:'#7CF29C',pts:m.map(d=>({t:d.t,v:d.y}))}]},
+    {etq:'v_y (m/s)',yMin:-30,yMax:30,cero:true,
+      series:[{color:'#FFC93C',pts:m.map(d=>({t:d.t,v:d.vy}))}]},
+    {etq:'v_x (m/s)',yMin:0,yMax:40,
+      series:[{color:'#B388FF',pts:m.map(d=>({t:d.t,v:d.vx}))}]}
+  ]});
+}
+function descPanel(){
+  panel(
+   '<div class="eyebrow">ESTACIÓN DE DATOS · DESCOMPOSICIÓN DE VECTORES</div>'+
+   '<h2>Dos velocidades independientes</h2>'+
+   '<p>La flecha verde (v_x) se mantuvo de la misma longitud todo el camino. La flecha amarilla (v_y) apuntaba hacia arriba, se encogió hasta cero en la cima y luego apuntó hacia abajo volviéndose cada vez más larga.</p>'+
+   '<div class="formula">v_x = v₀·cosθ &nbsp;(constante)<br>v_y(t) = v₀·sinθ − g·t</div>',
+   { t:'En un lanzamiento parabólico, ¿qué pasa con las aceleraciones horizontal (a_x) y vertical (a_y)?',
+     o:['a_x = 0 y a_y = 10 m/s² hacia abajo todo el tiempo','Ambas valen 10 m/s²','a_x disminuye y a_y aumenta','a_y vale cero en el punto más alto'], c:0,
+     e:'Horizontalmente no hay fuerzas actuando (despreciando el aire), por lo que a_x = 0 (MRU). Verticalmente la única fuerza es la gravedad, por lo que a_y = g = 10 m/s² hacia abajo durante todo el trayecto, sin importar en qué punto de la parábola esté el proyectil.' },
+   'VOLVER A EXPERIMENTAR', descIniciar);
+}
+
+/* ================= BUCLE Y CONTROLES ================= */
+let prev=performance.now();
+function loop(now){
+  let dt=(now-prev)/1000; prev=now; if(dt>.05) dt=.05;
+  S.anim+=dt;
+  if(S.aviso>0){ S.aviso-=dt; if(S.aviso<=0) document.getElementById('aviso').classList.remove('ver'); }
+  if(S.modo==='asalto'){ asaltoUpdate(dt); asaltoRender(); if(S.verGraf) asaltoGraficas(); }
+  else if(S.modo==='complemento'){ compUpdate(dt); compRender(); }
+  else if(S.modo==='descomponer'){ descUpdate(dt); descRender(); if(S.verGraf) descGraficas(); }
+  requestAnimationFrame(loop);
+}
+
+function pad(html){ document.getElementById('pad').innerHTML=html; }
+const scMenu=document.getElementById('scMenu'), scPanel=document.getElementById('scPanel');
+function ocultar(){ scMenu.hidden=true; scPanel.hidden=true; }
+function menu(){ S.modo='menu'; scPanel.hidden=true; scMenu.hidden=false; scMenu.scrollTop=0;
+  pad(''); document.getElementById('eqbar').innerHTML='';
+  [1,2,3,4].forEach(i=>celda(i,'—','—')); }
+
+function panel(html,q,boton,accion){
+  const modoAnterior=S.modo; S.modo='panel';
+  const P = Array.isArray(q)? q : [q];
+  const c=document.getElementById('panelCard');
+  let hq='';
+  P.forEach((qq,n)=>{
+    hq+='<div class="q"><div class="num">PREGUNTA TIPO SABER 11'+
+        (P.length>1? ' &middot; '+(n+1)+' DE '+P.length : '')+'</div><p>'+qq.t+'</p>'+
+        '<div id="opts'+n+'"></div><div id="fb'+n+'"></div></div>';
+  });
+  c.innerHTML=html+hq+
+   '<button class="cta" id="pGo" style="display:none">'+boton+'</button>'+
+   '<button class="ghost" id="pMenu">Elegir otro modo</button>'+
+   '<button class="ghost" id="pSig" style="border-color:#FFC93C;color:#FFC93C">Seguir al mundo 5 &#9656;</button>';
+  scPanel.hidden=false; scPanel.scrollTop=0;
+  const L2=['A','B','C','D']; let resueltas=0;
+  P.forEach((qq,n)=>{
+    const box=document.getElementById('opts'+n);
+    qq.o.forEach((op,i)=>{
+      const b=document.createElement('button');
+      b.className='opt'; b.innerHTML='<b>'+L2[i]+'</b>'+op;
+      b.onclick=()=>{
+        if(box.dataset.hecho) return; box.dataset.hecho='1'; resueltas++;
+        [...box.children].forEach((el,j)=>{ if(j===qq.c) el.classList.add('ok'); else if(j===i) el.classList.add('no'); });
+        const fb=document.getElementById('fb'+n);
+        fb.className=i===qq.c?'fb':'fb bad';
+        fb.innerHTML=(i===qq.c?'<b>Correcto.</b> ':'<b>La respuesta era '+L2[qq.c]+'.</b> ')+qq.e;
+        if(resueltas>=P.length) document.getElementById('pGo').style.display='block';
+        beep(i===qq.c?880:220,.18,'triangle',.05);
+      };
+      box.appendChild(b);
+    });
+  });
+  document.getElementById('pGo').onclick=accion;
+  document.getElementById('pMenu').onclick=menu;
+  document.getElementById('pSig').onclick=()=>{ if(window.FA) window.FA.ir(window.FA.idx+1); };
+  return modoAnterior;
+}
+
+document.querySelectorAll('.modo').forEach(b=>{
+  b.onclick=()=>{ const m=b.dataset.m;
+    document.getElementById('subt').textContent =
+      m==='asalto'?'MUNDO 4 · EL ASALTO': m==='complemento'?'MUNDO 4 · LEY DE LOS 90°':'MUNDO 4 · VECTORES DE VELOCIDAD';
+    if(m==='asalto') asaltoIniciar(); else if(m==='complemento') compIniciar(); else descIniciar(); };
+});
+document.getElementById('btnMenu').onclick=menu;
+document.getElementById('btnSound').onclick=function(){ S.sonido=!S.sonido; this.classList.toggle('on',S.sonido); };
+document.getElementById('btnGraf').onclick=function(){
+  if(S.modo==='complemento'){ aviso('Las gráficas no están disponibles en este modo',1.6); return; }
+  S.verGraf=!S.verGraf; this.classList.toggle('on',S.verGraf); resize();
+};
+
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r!=='number') r=0;
+    this.beginPath(); this.moveTo(x+r,y); this.lineTo(x+w-r,y);
+    this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r);
+    this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h);
+    this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r);
+    this.quadraticCurveTo(x,y,x+r,y); this.closePath(); return this;
+  };
+}
+resize(); requestAnimationFrame(loop);
+
+function iniciarEscenaSalidaParabolico(){
+  const cv = document.getElementById('cineExit'); if(!cv) return;
+  const ctx = cv.getContext('2d');
+  let tExit = 0, lineaIdx = -1, vozOn = true;
+  const GUION_EXIT = [
+    { t: 0.2, q: 'LA ANCIANA', l: 'No apuntes directo a la nave. Apunta al aire.' },
+    { t: 6.0, q: 'YARUMA', l: '¿Al aire? ¡Entendido! Avance constante hacia adelante y caída libre hacia abajo...' },
+    { t: 12.5, q: 'LA ANCIANA', l: '¡La curva perfecta es la combinación de ambos! Descomponer el movimiento en equis y ye neutralizó la escotilla de carga.' }
+  ];
+
+  function hablarExit(txt){
+    if(!vozOn || !window.speechSynthesis) return;
+    try{
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(txt);
+      u.lang = 'es-CO'; u.rate = 0.95; u.pitch = 0.75;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  const bVoz = document.getElementById('bVozExit');
+  if(bVoz) bVoz.onclick = () => {
+    vozOn = !vozOn;
+    bVoz.textContent = vozOn ? '🔊 VOZ' : '🔇 VOZ';
+    if(!vozOn) try{ window.speechSynthesis.cancel(); }catch(e){}
+    else if(lineaIdx >= 0) hablarExit(GUION_EXIT[lineaIdx].l);
+  };
+
+  const bRep = document.getElementById('bReplayExit');
+  if(bRep) bRep.onclick = () => { tExit = 0; lineaIdx = -1; };
+
+  let pTime = performance.now();
+  function animExit(now){
+    if(!document.getElementById('cineExit')) return;
+    const dt = Math.min(0.05, (now - pTime) / 1000); pTime = now;
+    tExit += dt;
+
+    for(let i = GUION_EXIT.length - 1; i >= 0; i--){
+      if(tExit >= GUION_EXIT[i].t && lineaIdx < i){
+        lineaIdx = i;
+        const qEl = document.getElementById('quienExit'), lEl = document.getElementById('lineaExit');
+        if(qEl) qEl.textContent = GUION_EXIT[i].q;
+        if(lEl) lEl.textContent = GUION_EXIT[i].l;
+        hablarExit(GUION_EXIT[i].l);
+        break;
+      }
+    }
+
+    /* PINTAR ANIMACIÓN CANVA DE ACCIÓN PARABÓLICO */
+    const W = 560, H = 240, suelo = H * 0.82;
+    ctx.fillStyle = '#04110F'; ctx.fillRect(0, 0, W, H);
+
+    // Valle de Bello
+    ctx.fillStyle = '#08211D';
+    for(let k = 0; k < 4; k++){
+      const sx = k * 160 - 30;
+      ctx.beginPath(); ctx.moveTo(sx - 100, suelo); ctx.lineTo(sx, suelo - 50); ctx.lineTo(sx + 100, suelo); ctx.fill();
+    }
+    ctx.fillStyle = '#0E332C'; ctx.fillRect(0, suelo, W, H - suelo);
+    ctx.fillStyle = '#7CF29C'; ctx.fillRect(0, suelo - 2, W, 3);
+
+    // Nave flotando a la derecha
+    const targetX = W * 0.80, targetY = H * 0.30;
+    ctx.fillStyle = '#14232B'; ctx.beginPath(); ctx.ellipse(targetX, targetY, 32, 10, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#FFC93C'; ctx.beginPath(); ctx.ellipse(targetX, targetY - 3, 16, 5, 0, 0, 7); ctx.fill();
+
+    // Yaruma con honda a la izquierda
+    const launchX = 60, launchY = suelo - 15;
+    ctx.fillStyle = '#7CF29C'; ctx.beginPath(); ctx.roundRect(launchX - 6, launchY - 16, 12, 16, 4); ctx.fill();
+    ctx.fillStyle = '#F2F6EF'; ctx.beginPath(); ctx.arc(launchX, launchY - 21, 5, 0, 7); ctx.fill();
+
+    // Anciana
+    ctx.fillStyle = '#B388FF'; ctx.beginPath(); ctx.roundRect(launchX - 30, launchY - 14, 11, 14, 4); ctx.fill();
+    ctx.fillStyle = '#F2F6EF'; ctx.beginPath(); ctx.arc(launchX - 25, launchY - 19, 4.5, 0, 7); ctx.fill();
+
+    // Trayectoria parabólica (x = vx * t, y = vy0 * t - 0.5 * g * t^2)
+    const loopT = (tExit * 1.2) % 3.0;
+    const vInitX = 140, vInitY = 130, gParab = 80;
+    const px = launchX + vInitX * loopT;
+    const py = launchY - (vInitY * loopT - 0.5 * gParab * loopT * loopT);
+
+    // Traza curva guía
+    ctx.strokeStyle = 'rgba(124,242,156,0.3)'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for(let step = 0; step <= 2.2; step += 0.05){
+      const tx = launchX + vInitX * step;
+      const ty = launchY - (vInitY * step - 0.5 * gParab * step * step);
+      if(step === 0) ctx.moveTo(tx, ty); else ctx.lineTo(tx, ty);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Proyectil
+    if(py <= suelo){
+      ctx.fillStyle = '#FFC93C'; ctx.beginPath(); ctx.arc(px, py, 6, 0, 7); ctx.fill();
+
+      // Vectores vx y vy
+      ctx.strokeStyle = '#7CF29C'; ctx.lineWidth = 2; // vx verde
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + 22, py); ctx.stroke();
+      ctx.strokeStyle = '#FFC93C'; ctx.lineWidth = 2; // vy amarillo
+      const curVy = -(vInitY - gParab * loopT) * 0.2;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + curVy); ctx.stroke();
+    }
+
+    // Impacto con la nave
+    if(Math.hypot(px - targetX, py - targetY) < 25){
+      ctx.fillStyle = '#FFC93C';
+      for(let p = 0; p < 8; p++){
+        const angP = p * Math.PI / 4;
+        ctx.fillRect(targetX + Math.cos(angP) * 15, targetY + Math.sin(angP) * 15, 4, 4);
+      }
+    }
+
+    // Fórmula proyectada en el cielo
+    ctx.font = '700 13px "Space Mono", monospace'; ctx.fillStyle = '#FFC93C'; ctx.textAlign = 'right';
+    ctx.fillText('v_x = v₀·cosθ   v_y = v₀·sinθ - g·t', W - 20, 30);
+    ctx.font = '10px "Space Mono", monospace'; ctx.fillStyle = '#7CF29C';
+    ctx.fillText('Combinación MRU (x) + MUA (y)', W - 20, 48);
+
+    requestAnimationFrame(animExit);
+  }
+  requestAnimationFrame(animExit);
+}
+})();
+</script>
+<script>
+(function(){ try{
+  var A=['mundo1-mru.html','mundo2-mua.html','mundo3-caida-libre.html','mundo4-parabolico.html','mundo5-circular.html'];
+  var N=['El rastro','La sombra que huye','Lo que cae','El asalto','La nave'];
+  var ruta=(location.pathname.split('/').pop()||'').toLowerCase();
+  var i=A.indexOf(ruta); if(i<0) A.forEach(function(a,k){ if(ruta.indexOf(a.split('.')[0])>=0) i=k; });
+  var j=new URLSearchParams(location.search).get('j');
+  if(!j){ try{ j=localStorage.getItem('fa_jugador'); }catch(e){} }
+  if(j) j=String(j).replace(/[<>&"']/g,'').slice(0,22);
+  var qs=j? '?j='+encodeURIComponent(j):'';
+  window.FA={ idx:i, qs:qs, jug:j||'', total:A.length,
+    ir:function(k){ if(k<0||k>=A.length) location.href='portada.html?mapa=1'+(qs?'&'+qs.slice(1):''); else location.href=A[k]+qs; },
+    mapa:function(){ location.href='portada.html?mapa=1'+(qs?'&'+qs.slice(1):''); },
+    nombreSig:function(){ return (i>=0&&i+1<A.length)? (i+2)+' · '+N[i+1] : ''; } };
+  var f=document.querySelector('.foot'); if(!f) return;
+  var viejo=f.innerHTML;
+  var bt='display:inline-block;padding:11px 14px;border-radius:12px;cursor:pointer;font-family:'
+    +"'Space Mono',monospace;font-size:11.5px;letter-spacing:.06em;border:1px solid rgba(124,242,156,.3);"
+    +'background:rgba(124,242,156,.08);color:#F2F6EF;';
+  var sig=(i>=0&&i+1<A.length)
+    ? '<button id="faSig" style="'+bt+'background:#FFC93C;color:#06201B;border-color:#FFC93C;font-weight:700">MUNDO '+(i+2)+' · '+N[i+1]+' &#9656;</button>'
+    : '<button id="faSig" style="'+bt+'background:#B388FF;color:#06201B;border-color:#B388FF;font-weight:700">FIN &#183; VOLVER AL MAPA</button>';
+  f.innerHTML='<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:10px">'
+    +'<button id="faMapa" style="'+bt+'">&#9666; MAPA</button>'+sig+'</div>'
+    +(j? '<div style="margin-bottom:6px;color:#7CF29C">JUGADOR: '+j.toUpperCase()+'</div>':'')+viejo;
+  document.getElementById('faMapa').onclick=function(){ window.FA.mapa(); };
+  document.getElementById('faSig').onclick=function(){ window.FA.ir(i+1); };
+}catch(e){} })();
+</script>
+</body>
+</html>
