@@ -45,40 +45,55 @@ body{background:var(--selva);color:var(--hueso);font-family:var(--texto);
 .espacio{flex:1;min-height:16px}
 
 .campo{margin-top:16px}
-.campo label{display:block;font-family:var(--dato);font-size:11px;letter-spacing:.2em;color:var(--lima);margin-bottom:6px;font-weight:700}
-.campo input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid rgba(0,245,155,.4);
-  background:rgba(6,26,22,.85);color:#FFF;font-family:var(--display);font-size:18px;letter-spacing:.02em;
-  box-shadow:0 4px 14px rgba(0,0,0,.4), inset 0 2px 4px rgba(0,0,0,.3)}
+.campo label{display:block;font-family:var(--dato);font-size:11px;letter-spacing:.2em;color:var(--oro);margin-bottom:6px;font-weight:700}
+.campo label::before{content:'❖ ';color:var(--oro)}
+.campo input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid #D97706;
+  background:linear-gradient(180deg, #092C23 0%, #051A15 100%);color:#FFF;font-family:var(--display);font-size:18px;letter-spacing:.02em;
+  box-shadow:0 4px 14px rgba(0,0,0,.5), inset 0 2px 4px rgba(0,0,0,.4)}
 .campo input::placeholder{font-family:var(--texto);font-weight:400;color:#618A7E;letter-spacing:0;font-size:16px}
-.campo input:focus{outline:none;border-color:var(--oro);background:rgba(8,35,30,.95);box-shadow:0 0 16px rgba(255,209,102,.3)}
+.campo input:focus{outline:none;border-color:#FDE047;background:#0C382D;box-shadow:0 0 16px rgba(255,209,102,.4)}
 
 .cta{width:100%;margin-top:12px;padding:16px;border:none;border-radius:14px;cursor:pointer;
   font-family:var(--display);font-size:18px;color:#041411;
   background:linear-gradient(180deg,#00F59B 0%,#00C978 100%);
   box-shadow:0 6px 0 #008751, 0 10px 24px rgba(0,245,155,.3);transition:transform .15s;}
 .cta:active{transform:translateY(4px);box-shadow:0 2px 0 #008751}
-.ghost{width:100%;margin-top:8px;padding:12px;border-radius:12px;cursor:pointer;background:rgba(6,26,22,.65);
-  border:1.5px solid rgba(0,245,155,.35);color:var(--hueso);font-family:var(--dato);font-size:12px;letter-spacing:.08em}
-.ghost:active{background:rgba(0,245,155,.18)}
+.ghost{width:100%;margin-top:8px;padding:12px;border-radius:12px;cursor:pointer;background:rgba(245,158,11,.08);
+  border:1.5px solid rgba(245,158,11,.35);color:var(--hueso);font-family:var(--dato);font-size:12px;letter-spacing:.08em}
+.ghost:active{background:rgba(245,158,11,.18)}
 
-.creditos{margin-top:20px;padding-top:14px;border-top:1px solid rgba(0,245,155,.2)}
-.creditos .rol{font-family:var(--dato);font-size:9.5px;letter-spacing:.24em;color:var(--lima);margin-bottom:6px}
-.creditos .autor{font-family:var(--display);font-size:16px;line-height:1.2;margin-bottom:6px;color:#FFF}
+.creditos{
+  margin-top:20px;padding:14px 16px;border-radius:14px;
+  background:linear-gradient(180deg, rgba(13,61,52,.7) 0%, rgba(6,28,23,.9) 100%);
+  border:1.5px solid rgba(217,119,6,.4);
+  box-shadow:inset 0 0 10px rgba(217,119,6,.1);
+}
+.creditos .rol{font-family:var(--dato);font-size:9.5px;letter-spacing:.24em;color:var(--oro);margin-bottom:6px;font-weight:700}
+.creditos .autor{font-family:var(--display);font-size:16px;line-height:1.2;margin-bottom:6px;color:#FEF08A}
 .creditos ul{list-style:none;font-family:var(--dato);font-size:10px;line-height:1.8;color:var(--niebla);letter-spacing:.03em}
-.creditos .inst{margin-top:10px;font-family:var(--dato);font-size:9.5px;letter-spacing:.12em;color:#789E92;line-height:1.6}
+.creditos .inst{margin-top:10px;font-family:var(--dato);font-size:9.5px;letter-spacing:.12em;color:#94BDB1;line-height:1.6}
 
 /* ---------- PRÓLOGO ---------- */
 #pro{background:#04110F;position:relative;min-height:100%}
 #cine{width:100%;display:block;background:#04110F}
 .barra{display:flex;align-items:center;gap:10px;padding:10px 14px;
-  border-bottom:1px solid rgba(0,245,155,.2);background:#08231E}
-.barra .t{font-family:var(--dato);font-size:10.5px;letter-spacing:.18em;color:var(--niebla);flex:1}
+  border-bottom:2px solid #D97706;background:#08231E}
+.barra .t{font-family:var(--dato);font-size:10.5px;letter-spacing:.18em;color:var(--oro);flex:1;font-weight:700}
 .chip{background:rgba(0,245,155,.1);border:1px solid rgba(0,245,155,.3);color:var(--hueso);
   border-radius:9px;padding:7px 11px;font-family:var(--dato);font-size:11px;cursor:pointer}
 .chip.on{background:rgba(255,209,102,.2);border-color:var(--oro);color:var(--oro);font-weight:700}
-.letrero{padding:16px 18px 24px;min-height:125px}
+.letrero{
+  padding:16px 18px 24px;min-height:125px;
+  background:linear-gradient(180deg, #0B332A 0%, #061F1A 100%);
+  border-bottom:2px solid #D97706;border-left:5px solid #F59E0B;
+  box-shadow:inset 0 0 10px rgba(245,158,11,.08);
+}
 .letrero p{font-size:15.5px;line-height:1.55;color:var(--hueso);max-width:640px}
-.letrero .quien{font-family:var(--dato);font-size:10.5px;letter-spacing:.2em;color:var(--morado);margin-bottom:6px}
+.letrero .quien{
+  font-family:var(--dato);font-size:10.5px;letter-spacing:.2em;color:#FDE047;
+  margin-bottom:6px;font-weight:700;display:flex;align-items:center;gap:6px;
+}
+.letrero .quien::before{content:'☀';color:#F59E0B}
 
 /* ---------- MAPA DE AVENTURA ANDINO ILUSTRADO ---------- */
 .mapa{padding:10px 8px 36px;position:relative;max-width:100%;margin:0 auto}
@@ -188,10 +203,15 @@ body{background:var(--selva);color:var(--hueso);font-family:var(--texto);
 }
 .modal-estacion-backdrop.abierto{display:flex}
 .modal-estacion{
-  background:linear-gradient(180deg,#0B2E27 0%,#051814 100%);
-  border:2px solid var(--lima);border-radius:24px;max-width:540px;width:100%;
-  padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.95), 0 0 35px rgba(0,245,155,.3);
+  background:radial-gradient(ellipse at top, #114238 0%, #082620 60%, #051A15 100%);
+  border:2px solid #D97706;border-radius:20px;max-width:540px;width:100%;
+  padding:24px 22px;box-shadow:0 24px 60px rgba(0,0,0,.95), 0 0 35px rgba(217,119,6,.3), inset 0 1px 0 rgba(254,240,138,.3);
   position:relative;animation:modalZoomIn .22s ease-out;
+}
+.modal-estacion::before{
+  content:'';position:absolute;top:0;left:18px;right:18px;height:4px;
+  background:repeating-linear-gradient(90deg, #F59E0B 0px, #F59E0B 12px, #DC2626 12px, #DC2626 24px, #0D6857 24px, #0D6857 36px);
+  border-radius:0 0 3px 3px;
 }
 @keyframes modalZoomIn{
   from{opacity:0;transform:scale(.92) translateY(12px)}
@@ -199,20 +219,23 @@ body{background:var(--selva);color:var(--hueso);font-family:var(--texto);
 }
 .modal-cerrar{
   position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#FFF;
+  background:rgba(255,255,255,.1);border:1px solid rgba(245,158,11,.4);color:#FDE047;
   font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
-.modal-eyebrow{font-family:var(--dato);font-size:10.5px;letter-spacing:.22em;color:var(--oro);margin-bottom:6px;font-weight:700}
+.modal-eyebrow{font-family:var(--dato);font-size:10.5px;letter-spacing:.22em;color:var(--oro);margin-bottom:6px;font-weight:700;display:flex;align-items:center;gap:6px}
+.modal-eyebrow::before{content:'❖';color:var(--oro)}
 .modal-titulo{font-family:var(--display);font-size:24px;color:#FFF;margin-bottom:8px}
 .modal-tema{
-  display:inline-block;background:rgba(0,245,155,.16);border:1px solid rgba(0,245,155,.45);
-  color:var(--lima);padding:4px 10px;border-radius:8px;font-family:var(--dato);font-size:11px;
+  display:inline-block;background:linear-gradient(90deg, rgba(217,119,6,.2) 0%, rgba(13,104,87,.35) 100%);
+  border:1px solid #F59E0B;
+  color:#FEF08A;padding:4px 10px;border-radius:8px;font-family:var(--dato);font-size:11px;
   letter-spacing:.12em;margin-bottom:12px;font-weight:700;
 }
 .modal-desc{font-size:14.5px;line-height:1.55;color:#D8EAE3;margin-bottom:14px}
 .modal-formula{
-  background:rgba(3,15,13,.95);border:1.5px solid rgba(255,209,102,.45);border-radius:14px;
-  padding:12px 14px;font-family:var(--dato);font-size:13px;color:var(--oro);margin-bottom:18px;text-align:center;
+  background:#06221D;border:1.5px solid #F59E0B;border-radius:14px;
+  padding:12px 14px;font-family:var(--dato);font-size:13px;color:#FDE047;margin-bottom:18px;text-align:center;
+  box-shadow:inset 0 0 10px rgba(245,158,11,.12);
 }
 .modal-formula small{display:block;font-size:10px;color:var(--niebla);letter-spacing:.1em;margin-top:4px}
 .modal-btn-iniciar{
